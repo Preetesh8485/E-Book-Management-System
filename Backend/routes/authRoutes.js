@@ -1,5 +1,5 @@
 import express from "express";
-import { getUser, login, logout, register, verifyOTP } from "../controllers/authController.js";
+import { forgotPassword, getUser, login, logout, register, verifyOTP } from "../controllers/authController.js";
 import { isAuthenticated } from "../middlewear/authMiddlewear.js";
 const authRouter =express.Router();
 authRouter.post('/register',register);
@@ -7,4 +7,5 @@ authRouter.post('/login',login);
 authRouter.get('/logout',isAuthenticated,logout);
 authRouter.get('/me',isAuthenticated,getUser);
 authRouter.post('/verify-otp',verifyOTP);
+authRouter.post('/password/forgot',forgotPassword);
 export default authRouter;

@@ -3,8 +3,10 @@ import User from "../Models/UserModel.js";
 import { catchAsynError } from "../middlewear/CatchAsyncErrors.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
-import { SendVerificationCode } from "../utils/sendVerificationCode.js";
+import {  SendVerificationCode } from "../utils/sendVerificationCode.js";
 import { sendToken } from "../utils/sendToken.js";
+import { generateForgotPasswordEmailTemplate } from "../utils/emailTemplates.js";
+import { sendEmail } from "../utils/sendEmail.js";
 
 export const register = catchAsynError(async (req, res, next) => {
     try {
@@ -119,4 +121,35 @@ export const getUser=catchAsynError(async(req,res,next)=>{
         success:true,
         user,
     })
+})
+export const forgotPassword=catchAsynError(async(req,res,next)=>{
+    const user = await User.findOne({
+        email:req.body.email,
+        Accountverification:true,
+    });
+    if(!req.body.email){
+        next(new ErrorHandler("Email field is empty",400));
+    }
+    if(!user){
+        next(new ErrorHandler("User not found",400));
+    }
+    const resetToken =user.getRestPasswordToken();
+    await user.save({validateBeforeSave:false});
+    const passwordResetURL=`${process.env.FRONTEND_URL}/password/reset/${resetToken}`
+    const message=generateForgotPasswordEmailTemplate(user.name,passwordResetURL);
+    try {
+        await sendEmail({email:user.email,
+            subject:"EBMS passoword reset",
+            message,
+        })
+        res.status(200).json({
+            success:true,
+            message:`Reset email sent to ${user.email} successfully`,
+        })
+    } catch (error) {
+        user.OTPReset=undefined;
+        user.OTPResetAt=undefined;
+        await user.save({validateBeforeSave:false});
+        return next(new ErrorHandler(error.message,500));
+    }
 })

@@ -46,7 +46,12 @@ userSchema.methods.generateToken=function(){
         
     )
 }
-
+userSchema.methods.getRestPasswordToken=function(){
+    const resetToken =crypto.randomBytes(20).toString("hex");
+    this.OTPReset=crypto.createHash("sha256").update(resetToken).digest("hex")
+    this.OTPExpiredAt=Date.now()+15*60*1000
+    return resetToken;
+}
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export default User;

@@ -218,3 +218,44 @@ export const PASSWORD_RESET_TEMPLATE = `
 </html>
 `
 
+export function generateForgotPasswordEmailTemplate(userName, resetLink) {
+  return `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reset Password</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+    
+    <div style="max-width: 500px; margin: auto; background: #ffffff; padding: 20px; border-radius: 10px;">
+      
+      <h2 style="text-align: center; color: #333;">Reset Your Password</h2>
+      
+      <p>Hi ${userName},</p>
+      
+      <p>We received a request to reset your password.</p>
+      
+      <p style="text-align: center; margin: 20px 0;">
+        <a href="${resetLink}" 
+           style="background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+          Reset Password
+        </a>
+      </p>
+      
+      <p>This link will expire in <strong>10 minutes</strong>.</p>
+      
+      <p>If you did not request this, please ignore this email.</p>
+      
+      <hr />
+      
+      <p style="font-size: 12px; color: #777;">
+        For security reasons, do not share this link with anyone.
+      </p>
+      
+    </div>
+
+  </body>
+  </html>
+  `;
+}
