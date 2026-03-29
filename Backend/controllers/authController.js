@@ -153,3 +153,28 @@ export const forgotPassword=catchAsynError(async(req,res,next)=>{
         return next(new ErrorHandler(error.message,500));
     }
 })
+export const resetPassword=catchAsynError(async(req,res,next)=>{
+    const{token}=req.params;
+    const OTPReset =crypto.createHash("sha256").update(token).digest("hex");
+    const user=await User.findOne({
+        OTPReset,
+        OTPResetAt:{$gt:Date.now()},
+
+    })
+    if(!user){
+        return next(new ErrorHandler("Reset password token is invalid or expired",400));
+    }
+    if(req.body.password!==req.body.confirmPassword){
+       return next(new ErrorHandler("Password and confirm password do not match",400));
+    }
+    if (req.body.password.length < 8 || req.body.password.length > 16||req.body.confirmPassword.length < 8 || req.body.confirmPassword.length > 16) {
+            return next(new ErrorHandler("Password should be between 8-16 characters", 400));
+        }
+    const hashedPassword=await  bcrypt.hash(req.body.password,10);
+    user.password=hashedPassword;
+    user.OTPReset=undefined;
+    user.OTPResetAt=undefined;
+    await user.save();
+    sendToken(user,200,"password reset successfully updated",res)
+    
+})
