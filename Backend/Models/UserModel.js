@@ -10,6 +10,7 @@ const userSchema =new mongoose.Schema({
         enum:["Admin","Member"],
         default:"Member",
     },
+    regdno:{type:Number,trim:true,required:true},
     Accountverification:{type:Boolean,default:false},
     borrowedBooks:[{
         ISBN:{

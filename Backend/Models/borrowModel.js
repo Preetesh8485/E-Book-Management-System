@@ -1,0 +1,56 @@
+import mongoose from "mongoose";
+const borrowedSchema= mongoose.Schema({
+    user:{
+        id:{
+            type:mongoose.Schema.Types.ObjectId,
+            Ref:"User",
+            required:true
+        },
+        email:{
+            type:String,
+            Ref:"User",
+            required:true
+        },
+        name:{
+            type:String,
+            Ref:"User",
+            required:true
+        },
+        regdno:{
+            type:Number,
+            Ref:"User",
+            required:true
+        }
+    },
+    price:{
+        type:Number,
+        required:true,
+    },
+    book:{
+         type:mongoose.Schema.Types.ObjectId,
+            Ref:"User",
+            required:true
+    },
+    borrowDate:{
+        type:Date,
+        default:Date.now()
+    },
+    dueDate:{
+        type:Date,
+        required:true
+    },
+    returnDate:{
+        type:Date,
+        required:true
+    },
+    fine:{
+        type:Number,
+        default:0,
+    },
+    notified:{
+        type:Boolean,
+        default:false
+    }
+},
+{timestamps:true})
+export const Borrow=mongoose.model("Borrow",borrowedSchema)

@@ -10,11 +10,11 @@ import { sendEmail } from "../utils/sendEmail.js";
 
 export const register = catchAsynError(async (req, res, next) => {
     try {
-        const { name, email, password } = req.body;
-        if (!name || !email || !password) {
+        const { name, email, password,regdno } = req.body;
+        if (!name || !email || !password ||!regdno) {
             return next(new ErrorHandler("please enter all fields", 400));
         }
-        const isRegistered = await User.findOne({ email, Accountverification: true });
+        const isRegistered = await User.findOne({ email,regdno,Accountverification: true });
         if (isRegistered) {
             return next(new ErrorHandler("User already exists! please login", 400));
         }
@@ -33,6 +33,7 @@ export const register = catchAsynError(async (req, res, next) => {
             name,
             email,
             password: hashedPassword,
+            regdno
         });
         const verificationCode = newUser.generateOTP();
         await newUser.save();
@@ -178,3 +179,36 @@ export const resetPassword=catchAsynError(async(req,res,next)=>{
     sendToken(user,200,"password reset successfully updated",res)
     
 })
+export const updatePassword=catchAsynError(async(req,res,next)=>{
+    const user=await User.findById(req.user._id).select("+password");
+    const{currentPassword,newPassword,confirmNewPassword}= req.body;
+    if(!currentPassword||!newPassword||!confirmNewPassword){
+        return next(new ErrorHandler("Field empty !Enter all fields",400));
+    }
+    const isPasswordMatched = await bcrypt.compare(currentPassword,user.password);
+    if(!isPasswordMatched){
+         return next(new ErrorHandler("Incorrect Current password",400));
+    }
+    if (newPassword.length < 8 || newPassword.length > 16||confirmNewPassword.length < 8 ||confirmNewPassword.length > 16) {
+            return next(new ErrorHandler("Password should be between 8-16 characters", 400));
+        }
+    if(newPassword!=confirmNewPassword){
+         return next(new ErrorHandler("Password don't match!",400));
+    }
+    const hashedPassword=await bcrypt.hash(newPassword,10);
+    user.password=hashedPassword;
+    await user.save();
+    res.status(200).json({
+        success:true,
+        message:"Password updated Successfully"
+    })
+})
+export const isAuthorized=(...roles)=>{
+    return(req,res,next)=>{
+        if(!roles.includes(req.user.role)){
+            return next(new ErrorHandler(`User with ${req.user.role} is not allowed to access this resource`,400))
+        }
+        next();
+    }
+    
+}
