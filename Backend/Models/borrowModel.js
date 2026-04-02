@@ -3,22 +3,22 @@ const borrowedSchema= mongoose.Schema({
     user:{
         id:{
             type:mongoose.Schema.Types.ObjectId,
-            Ref:"User",
+            ref:"User",
             required:true
         },
         email:{
             type:String,
-            Ref:"User",
+            ref:"User",
             required:true
         },
         name:{
             type:String,
-            Ref:"User",
+            ref:"User",
             required:true
         },
         regdno:{
             type:Number,
-            Ref:"User",
+            ref:"User",
             required:true
         }
     },
@@ -28,12 +28,12 @@ const borrowedSchema= mongoose.Schema({
     },
     book:{
          type:mongoose.Schema.Types.ObjectId,
-            Ref:"User",
+            ref:"Book",
             required:true
     },
     borrowDate:{
         type:Date,
-        default:Date.now()
+        default:Date.now
     },
     dueDate:{
         type:Date,
@@ -41,7 +41,7 @@ const borrowedSchema= mongoose.Schema({
     },
     returnDate:{
         type:Date,
-        required:true
+        default:null
     },
     fine:{
         type:Number,

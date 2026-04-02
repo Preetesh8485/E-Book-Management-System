@@ -7,6 +7,7 @@ import { errorMiddleware } from "./middlewear/errorMiddlewear.js";
 import authRouter from "./routes/authRoutes.js";
 import bookRouter from "./routes/BookRoutes.js";
 import orderRouter from "./routes/bookOrderRoutes.js"
+import borrowRouter from "./routes/borrowRouter.js";
 import { validateBody } from "./middlewear/validateBody.js";
 const app = express();
 
@@ -24,6 +25,7 @@ app.get("/", (req, res) => res.send("API working"));
 app.use('/api/auth',authRouter);
 app.use('/api/book',bookRouter);
 app.use('/api/order',orderRouter);
+app.use('/api/borrow',borrowRouter);
 
 
 app.use(errorMiddleware);

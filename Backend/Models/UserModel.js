@@ -13,9 +13,9 @@ const userSchema =new mongoose.Schema({
     regdno:{type:Number,trim:true,required:true},
     Accountverification:{type:Boolean,default:false},
     borrowedBooks:[{
-        ISBN:{
+        bookId:{
             type:mongoose.Schema.Types.ObjectId,
-            ref:"Borrow",
+            ref:"Book",
         },
         returned:{
             type:Boolean,

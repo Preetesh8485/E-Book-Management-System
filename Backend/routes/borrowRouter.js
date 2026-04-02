@@ -1,0 +1,11 @@
+import express, { Router } from "express";
+import { isAuthenticated } from "../middlewear/authMiddlewear.js";
+import{} from "../controllers/bookContoller.js";
+import { borrowedBooks,recordBorrowedBooks,getBorrowedBooksForAdmin,returnBorrowedBook } from "../controllers/borrowController.js";
+import { isAuthorized } from "../controllers/authController.js";
+const borrowRouter=express.Router();
+borrowRouter.post("/record-borrowed-book/:id",isAuthenticated,isAuthorized("Admin"),recordBorrowedBooks);
+borrowRouter.get("/get-borrowed-book-by-users/:id",isAuthenticated,isAuthorized("Admin"),getBorrowedBooksForAdmin);
+borrowRouter.get("/borrowed-books",isAuthenticated,borrowedBooks);
+borrowRouter.put("/return-borrowed-book/:id",isAuthenticated,isAuthorized("Admin"),returnBorrowedBook);
+export default borrowRouter;
