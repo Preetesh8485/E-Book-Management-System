@@ -259,3 +259,49 @@ export function generateForgotPasswordEmailTemplate(userName, resetLink) {
   </html>
   `;
 }
+export const borrowTemplate = (name, bookTitle, dueDate) => {
+  return `
+    <div style="font-family: Arial; padding: 20px;">
+      <h2 style="color: #4CAF50;">📚 Book Issued Successfully</h2>
+      <p>Hello <b>${name}</b>,</p>
+      <p>You have borrowed <b>${bookTitle}</b>.</p>
+      <p>📅 Due Date: <b>${new Date(dueDate).toDateString()}</b></p>
+      <p>Please return it on time to avoid fines.</p>
+    </div>
+  `;
+};
+export const dueReminderTemplate = (name, bookTitle, dueDate) => {
+  return `
+  <div style="font-family: Arial, sans-serif; background-color: #f4f6f8; padding: 20px;">
+    
+    <div style="max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+      
+      <h2 style="color: #ff9800; text-align: center;">⏰ Book Due Reminder</h2>
+      
+      <p style="font-size: 16px;">Hello <b>${name}</b>,</p>
+      
+      <p style="font-size: 15px;">
+        This is a reminder that your borrowed book 
+        <b>"${bookTitle}"</b> is due soon.
+      </p>
+      
+      <p style="font-size: 15px;">
+        📅 <b>Due Date:</b> ${new Date(dueDate).toDateString()}
+      </p>
+      
+      <div style="margin: 20px 0; padding: 12px; background-color: #fff3cd; border-left: 5px solid #ff9800; border-radius: 5px;">
+        <p style="margin: 0; font-size: 14px;">
+          Please return the book on time to avoid any late fines.
+        </p>
+      </div>
+      
+      <p style="font-size: 14px; color: #555;">
+        Thank you,<br/>
+        <b>Library Management System</b>
+      </p>
+      
+    </div>
+    
+  </div>
+  `;
+};
