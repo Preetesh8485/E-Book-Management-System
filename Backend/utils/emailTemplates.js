@@ -270,33 +270,106 @@ export const borrowTemplate = (name, bookTitle, dueDate) => {
     </div>
   `;
 };
-export const dueReminderTemplate = (name, bookTitle, dueDate) => {
+export const pendingBooksReminderTemplate = (name) => {
   return `
   <div style="font-family: Arial, sans-serif; background-color: #f4f6f8; padding: 20px;">
     
-    <div style="max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    <div style="max-width: 500px; margin: auto; background: #ffffff; padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
       
-      <h2 style="color: #ff9800; text-align: center;">⏰ Book Due Reminder</h2>
+      <h2 style="color: #dc2626; text-align: center;">
+        📚 Pending Book Reminder
+      </h2>
       
-      <p style="font-size: 16px;">Hello <b>${name}</b>,</p>
-      
-      <p style="font-size: 15px;">
-        This is a reminder that your borrowed book 
-        <b>"${bookTitle}"</b> is due soon.
+      <p style="font-size: 16px; color: #333;">
+        Hello <b>${name}</b>,
       </p>
       
-      <p style="font-size: 15px;">
-        📅 <b>Due Date:</b> ${new Date(dueDate).toDateString()}
+      <p style="font-size: 15px; color: #444;">
+        This is a friendly reminder that you have one or more books pending to return.
       </p>
       
-      <div style="margin: 20px 0; padding: 12px; background-color: #fff3cd; border-left: 5px solid #ff9800; border-radius: 5px;">
-        <p style="margin: 0; font-size: 14px;">
-          Please return the book on time to avoid any late fines.
+      <div style="margin: 20px 0; padding: 12px; background-color: #fee2e2; border-left: 5px solid #dc2626; border-radius: 5px;">
+        <p style="margin: 0; font-size: 14px; color: #7f1d1d;">
+          Please return them as soon as possible to avoid any late fines.
         </p>
       </div>
       
       <p style="font-size: 14px; color: #555;">
         Thank you,<br/>
+        <b>Library Management System</b>
+      </p>
+      
+    </div>
+    
+  </div>
+  `;
+};
+export const fineWarningTemplate = (name, fine, days = 7) => {
+  return `
+  <div style="font-family: Arial, sans-serif; background-color: #f4f6f8; padding: 20px;">
+    
+    <div style="max-width: 500px; margin: auto; background: #ffffff; padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+      
+      <h2 style="color: #dc2626; text-align: center;">
+        ⚠️ Fine Payment Required
+      </h2>
+      
+      <p style="font-size: 16px;">Hello <b>${name}</b>,</p>
+      
+      <p style="font-size: 15px;">
+        You have successfully returned your borrowed book. However, a late fine has been applied.
+      </p>
+      
+      <div style="margin: 20px 0; padding: 15px; background-color: #fee2e2; border-left: 5px solid #dc2626; border-radius: 5px;">
+        <p style="margin: 0; font-size: 16px;">
+          💰 <b>Fine Amount: ₹${fine}</b>
+        </p>
+      </div>
+      
+      <p style="font-size: 14px; color: #444;">
+        Please ensure that the fine is paid within <b>${days} days</b>.
+      </p>
+      
+      <div style="margin-top: 15px; padding: 12px; background-color: #fff3cd; border-left: 5px solid #ff9800; border-radius: 5px;">
+        <p style="margin: 0; font-size: 14px; color: #7c2d12;">
+          Failure to pay within this period may result in suspension of your library access.
+        </p>
+      </div>
+      
+      <p style="margin-top: 20px; font-size: 14px; color: #555;">
+        Regards,<br/>
+        <b>Library Management System</b>
+      </p>
+      
+    </div>
+    
+  </div>
+  `;
+};
+export const returnSuccessTemplate = (name) => {
+  return `
+  <div style="font-family: Arial, sans-serif; background-color: #f4f6f8; padding: 20px;">
+    
+    <div style="max-width: 500px; margin: auto; background: #ffffff; padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+      
+      <h2 style="color: #16a34a; text-align: center;">
+        ✅ Book Returned Successfully
+      </h2>
+      
+      <p style="font-size: 16px;">Hello <b>${name}</b>,</p>
+      
+      <p style="font-size: 15px;">
+        Your borrowed book has been successfully returned.
+      </p>
+      
+      <div style="margin: 20px 0; padding: 12px; background-color: #dcfce7; border-left: 5px solid #16a34a; border-radius: 5px;">
+        <p style="margin: 0; font-size: 14px;">
+          🎉 No dues are pending. Thank you for returning the book on time!
+        </p>
+      </div>
+      
+      <p style="margin-top: 20px; font-size: 14px; color: #555;">
+        Regards,<br/>
         <b>Library Management System</b>
       </p>
       

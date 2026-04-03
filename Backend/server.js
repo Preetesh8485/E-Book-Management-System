@@ -13,6 +13,7 @@ import { validateBody } from "./middlewear/validateBody.js";
 import{v2 as cloudinary}from "cloudinary";
 import expressFileupload from "express-fileupload"
 import { notifyUser } from "./utils/notifyUsers.js";
+import { removedUnverifiedAccounts } from "./utils/removeUnverifiedAccount.js";
 cloudinary.config({
   cloud_name:process.env.CLOUDINARY_CLIENT_NAME,
   api_key:process.env.CLOUDINARY_CLIENT_API,
@@ -21,7 +22,8 @@ cloudinary.config({
 const app = express();
 
 const port = process.env.PORT || 4000;
-// notifyUser();
+notifyUser();
+removedUnverifiedAccounts();
 connectDB();
 
 const allowedOrigins = ["http://localhost:5173"];

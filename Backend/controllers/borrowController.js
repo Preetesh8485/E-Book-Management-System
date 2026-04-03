@@ -5,7 +5,7 @@ import {Borrow} from "../Models/borrowModel.js"
 import User from "../Models/UserModel.js";
 import { calculateFine } from "../utils/finecalculate.js";
 import { sendEmail } from "../utils/sendEmail.js";
-import { borrowTemplate } from "../utils/emailTemplates.js";
+import { borrowTemplate , fineWarningTemplate ,returnSuccessTemplate} from "../utils/emailTemplates.js";
 export const recordBorrowedBooks = catchAsynError(async(req,res,next)=>{
 const {id}=req.params;
  const {email}=req.body;
@@ -94,6 +94,25 @@ export const returnBorrowedBook = catchAsynError(async(req,res,next)=>{
  const fine=calculateFine(borrow.dueDate);
  borrow.fine = fine;
  await borrow.save();
+ if (fine > 0) {
+  const message = fineWarningTemplate(user.name, fine);
+
+  await sendEmail({
+    email: user.email,
+    subject: "⚠️ Pending Fine Payment - Library Notice",
+    message,
+    text: `Hello ${user.name}, you have a pending fine of ₹${fine}. Please pay within 7 days to avoid suspension.`,
+  });
+}else {
+  const message = returnSuccessTemplate(user.name);
+
+  await sendEmail({
+    email: user.email,
+    subject: "✅ Book Returned Successfully",
+    message,
+    text: `Hello ${user.name}, your book has been successfully returned.`,
+  });
+}
  res.status(200).json({
    success:true,
    message:fine!==0?`Book returned successfully.Total overdue fine ₹${fine}`:"Book returned successfully"
