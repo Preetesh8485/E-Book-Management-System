@@ -34,10 +34,10 @@ const Home = () => {
                 ) : (
                   <AdminDashboard/>
                 )
-                break;
+               
               case "Books":
                 return <BookManagement/>;
-                break;
+                
               case "Catalog":
                 if (user.role === "Admin") {
                   return <Catalog/>
@@ -49,7 +49,7 @@ const Home = () => {
                 }
                 break;
               case "My Borrowed Books":
-                if (user.role === "Admin") {
+                if (user.role === "Member") {
                   return <MyBorrowedBooks/>
                 }
                 break;
@@ -64,7 +64,7 @@ const Home = () => {
                 ) : (
                   <AdminDashboard/>
                 )
-                break;
+                
             }
           }
         )()

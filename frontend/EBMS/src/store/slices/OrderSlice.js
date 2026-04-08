@@ -8,9 +8,9 @@ const orderSlice = createSlice({
         error: null,
         message: null,
         order: null,
+        orders: [],
     },
     reducers: {
-        // CREATE ORDER
         createOrderReq(state) {
             state.loading = true;
             state.error = null;
@@ -20,6 +20,7 @@ const orderSlice = createSlice({
             state.loading = false;
             state.message = action.payload.message;
             state.order = action.payload.order;
+            state.orders.unshift(action.payload.order);
         },
         createOrderFail(state, action) {
             state.loading = false;
@@ -35,14 +36,27 @@ const orderSlice = createSlice({
         deliverOrderSuccess(state, action) {
             state.loading = false;
             state.message = action.payload.message;
-            state.order = action.payload.order;
+            state.orders = state.orders.map(order =>
+                order._id === action.payload.order._id
+                    ? action.payload.order
+                    : order
+            );
         },
         deliverOrderFail(state, action) {
             state.loading = false;
             state.error = action.payload;
         },
-
-        // RESET
+        getOrdersReq(state) {
+            state.loading = true;
+        },
+        getOrdersSuccess(state, action) {
+            state.loading = false;
+            state.orders = action.payload.orders;
+        },
+        getOrdersFail(state, action) {
+            state.loading = false;
+            state.error = action.payload;
+        },
         resetOrderSlice(state) {
             state.loading = false;
             state.error = null;
@@ -95,6 +109,26 @@ export const markOrderDelivered = (id) => async (dispatch) => {
     } catch (error) {
         dispatch(
             orderSlice.actions.deliverOrderFail(
+                error.response?.data?.message || "Something went wrong"
+            )
+        );
+    }
+};
+
+export const getAllOrders = () => async (dispatch) => {
+    try {
+        dispatch(orderSlice.actions.getOrdersReq());
+
+        const res = await axios.get(
+            "http://localhost:4000/api/order/all",
+            { withCredentials: true }
+        );
+
+        dispatch(orderSlice.actions.getOrdersSuccess(res.data));
+
+    } catch (error) {
+        dispatch(
+            orderSlice.actions.getOrdersFail(
                 error.response?.data?.message || "Something went wrong"
             )
         );

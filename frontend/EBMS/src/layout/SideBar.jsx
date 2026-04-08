@@ -64,7 +64,7 @@ const SideBar = ({
 
         <nav className="flex-1 px-6 space-y-2">
           <button
-            className="w-full py-2 font-medium flex items-center space-x-2"
+            className="w-full py-2 font-medium flex items-center space-x-2 hover:cursor-pointer"
             onClick={() => setSelectedComponent("Dashboard")}
           >
             <img src={dashboardIcon} alt="icon" />
@@ -72,7 +72,7 @@ const SideBar = ({
           </button>
 
           <button
-            className="w-full py-2 font-medium flex items-center space-x-2"
+            className="w-full py-2 font-medium flex items-center space-x-2 hover:cursor-pointer"
             onClick={() => setSelectedComponent("Books")}
           >
             <img src={bookIcon} alt="icon" />
@@ -82,7 +82,7 @@ const SideBar = ({
           {isAuthenticated && user?.role === "Admin" && (
             <>
               <button
-                className="w-full py-2 font-medium flex items-center space-x-2"
+                className="w-full py-2 font-medium flex items-center space-x-2 hover:cursor-pointer"
                 onClick={() => setSelectedComponent("Catalog")}
               >
                 <img src={catalogIcon} alt="icon" />
@@ -90,7 +90,7 @@ const SideBar = ({
               </button>
 
               <button
-                className="w-full py-2 font-medium flex items-center space-x-2"
+                className="w-full py-2 font-medium flex items-center space-x-2 hover:cursor-pointer"
                 onClick={() => setSelectedComponent("Users")}
               >
                 <img src={usersIcon} alt="icon" />
@@ -98,7 +98,7 @@ const SideBar = ({
               </button>
 
               <button
-                className="w-full py-2 font-medium flex items-center space-x-2"
+                className="w-full py-2 font-medium flex items-center space-x-2 hover:cursor-pointer"
                 onClick={() => setSelectedComponent("Order Book")}
               >
                 <img src={bookIcon} alt="icon" />
@@ -106,7 +106,7 @@ const SideBar = ({
               </button>
 
               <button
-                className="w-full py-2 font-medium flex items-center space-x-2"
+                className="w-full py-2 font-medium flex items-center space-x-2 hover:cursor-pointer"
                 onClick={() => dispatch(toggleAddNewAdminPopup())}
               >
                 <RiAdminFill className="w-6 h-6" />
@@ -117,7 +117,7 @@ const SideBar = ({
 
           {isAuthenticated && user?.role === "Member" && (
             <button
-              className="w-full py-2 font-medium flex items-center space-x-2"
+              className="w-full py-2 font-medium flex items-center space-x-2 hover:cursor-pointer"
               onClick={() =>
                 setSelectedComponent("My Borrowed Books")
               }
@@ -128,7 +128,7 @@ const SideBar = ({
           )}
 
           <button
-            className="w-full py-2 font-medium flex items-center space-x-2"
+            className="w-full py-2 font-medium flex items-center space-x-2 hover:cursor-pointer"
             onClick={() => dispatch(toggleSettingPopup())}
           >
             <img src={settingIcon} alt="icon" />
@@ -139,7 +139,7 @@ const SideBar = ({
         <div className="px-6 py-4">
           <button
             onClick={handleLogout}
-            className="py-2 font-medium flex items-center justify-center space-x-5 mx-auto"
+            className="py-2 font-medium flex items-center justify-center space-x-5 mx-auto hover:cursor-pointer"
           >
             <img src={logoutIcon} alt="icon" />
             <span>Log Out</span>
@@ -150,7 +150,7 @@ const SideBar = ({
           src={closeIcon}
           alt="icon"
           onClick={() => setIsSideBarOpen(!isSideBarOpen)}
-          className="absolute top-0 right-0 mt-4 md:hidden px-2"
+          className="absolute top-0 right-0 mt-4 md:hidden px-2 hover:cursor-pointer"
         />
       </aside>
 

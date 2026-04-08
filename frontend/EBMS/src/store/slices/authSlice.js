@@ -247,10 +247,10 @@ export const resetPassword=(data,token)=>async(dispatch)=>{
         dispatch(authSlice.actions.ResetPasswordFail(error.response.data.error));
     })
 }
-export const UpdatePassword=(data)=>async(dispatch)=>{
+export const updatePassword=(data)=>async(dispatch)=>{
     dispatch(authSlice.actions.UpdatePasswordReq());
     await axios
-    .put(`http://localhost:4000/api/auth/password/update`,{data},{
+    .put(`http://localhost:4000/api/auth/password/update`,data,{
         withCredentials:true,
         headers:{
             "Content-Type":"application/json",
@@ -260,7 +260,7 @@ export const UpdatePassword=(data)=>async(dispatch)=>{
         dispatch(authSlice.actions.UpdatePasswordSuccess(res.data.message));
     })
     .catch((error)=>{
-        dispatch(authSlice.actions.UpdatePasswordFail(error.response.data.message));
+        dispatch(authSlice.actions.UpdatePasswordFail(error.response.data.error));
     })
 }
 

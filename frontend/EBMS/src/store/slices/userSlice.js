@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import { toggleAddNewAdminPopup } from "./popupSlice";
 
 const userSlice=createSlice({
     name:"user",
@@ -46,7 +47,8 @@ export const addNewAdmin=(data)=>async(dispatch)=>{
             "Content-Type":"multipart/form-data"
         }
     }).then(res=>{dispatch(userSlice.actions.addNewAdminSuccess());
-        toast.success(res.data.message)        
+        toast.success(res.data.message)   
+        dispatch(toggleAddNewAdminPopup())     
     }).catch(err=>{userSlice.actions.addNewAdminFail()
         toast.error(err.response.data.error)
     });
