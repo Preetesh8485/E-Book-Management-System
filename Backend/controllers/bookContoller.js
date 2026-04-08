@@ -122,3 +122,19 @@ export const markOrderDelivered = catchAsynError(async (req, res, next) => {
         order
     });
 });
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await OrderList.find().sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      orders,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message || "Failed to fetch orders",
+    });
+  }
+};
