@@ -51,12 +51,7 @@ const Users = () => {
     indexOfFirstUser,
     indexOfLastUser
   );
-  const hasOverdue = (user) => {
-    const now = new Date();
-    return user.borrowedBooks?.some(book =>
-      new Date(book.dueDate) < now && !book.returned
-    );
-  };
+ 
   return (
     <>
       <main className="relative flex-1 p-6 pt-28 ">
@@ -121,12 +116,9 @@ const Users = () => {
                       </td>
                       <td className="px-4 py-2 text-center">
                         <button
-                          disabled={hasOverdue(user)}
                           onClick={() => handleDeleteUser(user._id)}
-                          className={`px-3 py-1 text-sm text-white rounded ${hasOverdue(user)
-                              ? "bg-gray-400 cursor-not-allowed"
-                              : "bg-red-600 hover:bg-red-700"
-                            }`}
+                          className="px-3 py-1 text-sm text-white rounded bg-red-600 hover:bg-red-700"
+                            
                         >
                           Revoke Access
                         </button>
