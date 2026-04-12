@@ -88,7 +88,7 @@ export const createOrder = (data) => async (dispatch) => {
     } catch (error) {
         dispatch(
             orderSlice.actions.createOrderFail(
-                error.response?.data?.message || "Something went wrong"
+                error.response?.data?.err || "Something went wrong"
             )
         );
     }

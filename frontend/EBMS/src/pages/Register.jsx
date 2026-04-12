@@ -81,7 +81,7 @@ const Register = () => {
               </span>
             </div>
             <div className="mb-2">
-              <input type="numeber" value={regdno} onChange={(e) => setRegdno(e.target.value)} placeholder="Regdno" className="w-full px-4 py-3 border border-black rounded-md focus:outline-none" />
+              <input type="number" value={regdno} onChange={(e) => setRegdno(e.target.value)} placeholder="Regdno" className="w-full px-4 py-3 border border-black rounded-md focus:outline-none" />
             </div>
             <div className="block md:hidden font-semibold mt-5">
               <p>Already Have account ?</p>

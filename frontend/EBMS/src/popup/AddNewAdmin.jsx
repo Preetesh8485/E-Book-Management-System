@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addNewAdmin } from "../store/slices/userSlice";
 import { toggleAddNewAdminPopup } from "../store/slices/popupSlice";
 import Cropper from "react-easy-crop";
+import { useEffect } from "react";
 const AddNewAdmin = () => {
   const dispatch = useDispatch();
   const { loading } = useSelector(state => state.user);
@@ -29,7 +30,13 @@ const AddNewAdmin = () => {
     setImage(imageUrl);
     setShowCropper(true); // open cropper
   };
-  
+  const [animate, setAnimate] = useState(false);
+
+
+  useEffect(() => {
+    const t = setTimeout(() => setAnimate(true), 10);
+    return () => clearTimeout(t);
+  }, []);
   const handleNewAdmin = (e) => {
     e.preventDefault();
     const data = new FormData();
@@ -39,6 +46,12 @@ const AddNewAdmin = () => {
     data.append("avatar", avatar);
     data.append("regdno", regdno);
     dispatch(addNewAdmin(data))
+  };
+  const handleClose = () => {
+    setAnimate(false);
+    setTimeout(() => {
+      dispatch(toggleAddNewAdminPopup());
+    }, 300);
   };
   const onCropComplete = (croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
@@ -86,15 +99,24 @@ const AddNewAdmin = () => {
   };
 
   return <>
-    <div className="fixed inset-0 bg-black/50  p-5 flex items-center justify-center z-50">
-      <div className="w-full bg-white rounded-lg shadow-lg md:w-1/3">
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+
+      {/* 🔥 Background blur */}
+      <div
+        onClick={handleClose}
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+      ></div>
+      <div
+        className={`w-full bg-white rounded-lg shadow-lg md:w-1/3 relative transform transition-all duration-300 ${animate ? "scale-100 opacity-100" : "scale-90 opacity-0"
+          }`}
+      >
         <div className="p-6">
           <header className="flex justify-between items-center mb-7 pb-5 border-b border-black">
             <div>
               <img src={keyIcon} alt="key-icon" />
               <h3>Add new admin</h3>
             </div>
-            <img src={closeIcon} alt="close-icon" onClick={() => dispatch(toggleAddNewAdminPopup())} />
+            <img src={closeIcon} alt="close-icon" onClick={handleClose} />
           </header>
           <form onSubmit={handleNewAdmin}>
             {/*avatar selection*/}
@@ -104,28 +126,41 @@ const AddNewAdmin = () => {
               </label>
             </div>
             <div className="mb-4">
-               <label className="block text-gray-900 font-medium">Name</label>
-               <input type="text" value={name} onChange={(e)=>setName(e.target.value)} placeholder="Admin Full name" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-black" />
+              <label className="block text-gray-900 font-medium">Name</label>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Admin Full name" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-black" />
             </div>
             <div className="mb-4">
-               <label className="block text-gray-900 font-medium">Email</label>
-               <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Admin valid Email" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-black" />
+              <label className="block text-gray-900 font-medium">Email</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Admin valid Email" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-black" />
             </div>
             <div className="mb-4">
-               <label className="block text-gray-900 font-medium">Regdno</label>
-               <input type="number" value={regdno} onChange={(e)=>setRegdno(e.target.value)} placeholder="Admin redgno" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-black" />
+              <label className="block text-gray-900 font-medium">Regdno</label>
+              <input type="number" value={regdno} onChange={(e) => setRegdno(e.target.value)} placeholder="Admin redgno" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-black" />
             </div>
             <div className="mb-4">
-               <label className="block text-gray-900 font-medium">Password</label>
-               <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Admin entry password" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-black" />
+              <label className="block text-gray-900 font-medium">Password</label>
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Admin entry password" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-black" />
             </div>
 
             <div className="flex justify-center space-x-4">
-              <button type="button" onClick={()=>{dispatch(toggleAddNewAdminPopup())}} className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
-               CLOSE
+              <button type="button" onClick={handleClose} className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
+                CLOSE
               </button>
-              <button type="submit" disabled={loading} onClick={handleNewAdmin} className="px-4 py-2 bg-black text-white hover:bg-gray-600 rounded-md ">
-                ADD
+              <button
+                type="submit"
+                disabled={
+                  loading || !name || !email || !password || !regdno || !avatar
+                }
+                className="px-4 py-2 bg-black text-white rounded-md flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    ADDING...
+                  </>
+                ) : (
+                  "ADD"
+                )}
               </button>
             </div>
           </form>

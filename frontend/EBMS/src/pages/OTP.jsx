@@ -53,7 +53,7 @@ const OTP = () => {
   type="submit"
   className={`w-full py-3 rounded-xl font-semibold transition-colors duration-200 ${
     otp.length === 5
-      ? "border-2 border-black bg-black text-white hover:bg-white hover:text-black"
+      ? "border-2 border-black bg-blue-700 text-white hover:bg-white hover:text-black"
       : "bg-gray-300 text-gray-500 cursor-not-allowed"
   }`}
 >
@@ -64,13 +64,13 @@ const OTP = () => {
     </div>
 
 
-    <div className="hidden w-full md:w-1/2 bg-black text-white md:flex flex-col items-center justify-center p-8 rounded-tl-[80px] rounded-bl-[80px]">
+    <div className="hidden w-full md:w-1/2 bg-[#1E3A8A] text-white md:flex flex-col items-center justify-center p-8 rounded-tl-[80px] rounded-bl-[80px]">
       <div className="text-center h-100">
         <div className="flex justify-center mb-12">
           <img src={logo_with_title} alt="logo" className=" mb-12 h-44 w-auto" />
         </div>
         <p className="text-gray-300 mb-12">Not registered ? Sign up now.</p>
-        <Link to={"/register"} className=" border-2 border-white px-8 w-full font-semibold bg-black text-white py-2 rounded-lg hover:bg-white hover:text-black transition duration-300">SIGN UP</Link>
+        <Link to={"/register"} className=" border-2 border-white px-8 w-full font-semibold bg-[#1E3A8A] text-white py-2 rounded-lg hover:bg-white hover:text-black transition duration-300">SIGN UP</Link>
       </div>
     </div>
   </div>
