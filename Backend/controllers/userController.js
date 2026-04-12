@@ -49,3 +49,44 @@ export const registerNewAdmin=catchAsynError(async(req,res,next)=>{
         admin
     })
 })
+export const deleteMemberUser = catchAsynError(async (req, res, next) => {
+    const { id } = req.params;
+
+    if (!id) {
+        return next(new ErrorHandler("User ID is required", 400));
+    }
+
+    const user = await User.findById(id).populate("borrowedBooks");
+
+    if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+    }
+
+    if (user.role !== "Member") {
+        return next(new ErrorHandler("Only Member users can be deleted", 403));
+    }
+    const now = new Date();
+
+    const hasOverdue = user.borrowedBooks.some(book => {
+        return new Date(book.dueDate) < now && !book.returned;
+    });
+
+    if (hasOverdue) {
+        return next(
+            new ErrorHandler(
+                "User has overdue books. Cannot delete account.",
+                400
+            )
+        );
+    }
+    if (user.avatar?.public_id) {
+        await cloudinary.uploader.destroy(user.avatar.public_id);
+    }
+
+    await user.deleteOne();
+
+    res.status(200).json({
+        success: true,
+        message: "Member deleted successfully",
+    });
+});

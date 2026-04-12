@@ -30,7 +30,7 @@ const ResetPassword = () => {
     }
   }, [dispatch, isAuthenticated, message, error, loading]);
   if (isAuthenticated) {
-    return <Navigate to={"/login"} />
+    return <Navigate to={"/auth"} />
   }
   return <>
     <div className="flex flex-col md:flex-row h-screen">

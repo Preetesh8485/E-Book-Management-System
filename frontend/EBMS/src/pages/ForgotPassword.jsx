@@ -40,7 +40,7 @@ const ForgotPassword = () => {
     </div>
     {/* rigth section */}
     <div className="w-full md:1/2 flex items-center justify-center bg-white p-8 relative">
-        <Link to={"/login"} className="border-2 border-black text-black rounded-3xl font-bold w-52 py-2 px-4 fixed top-10 -left-28 hover:bg-white hover:text-black transition duration-200 text-end">Back</Link>
+        <Link to={"/auth"} className=" bg-white border-2 border-black text-black rounded-3xl font-bold w-52 py-2 px-4 fixed top-10 -left-28 hover:bg-gray-500 hover:text-black transition duration-200 text-end">Back</Link>
         <div className="w-full max-w-sm">
           <div className="flex justify-center mb-12 ">
             <div className="rounded-full flex items-center justify-center">
