@@ -92,7 +92,7 @@ const BookManagement = () => {
 
         {searchedBooks && searchedBooks.length > 0 ? (
           <div className="mt-6 bg-white rounded-md shadow-lg overflow-hidden">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto"style={{overflowX: "auto"}}>
               <table className="min-w-full border-collapse">
                 <thead>
                   <tr className="bg-gray-200">

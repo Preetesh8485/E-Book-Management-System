@@ -80,7 +80,7 @@ const BookOrders = () => {
       {loading ? (
         <h2 className="mt-6">Loading...</h2>
       ) : filteredOrders.length > 0 ? (
-        <div className="mt-6 overflow-auto bg-white rounded-md shadow-lg">
+        <div className="mt-6 overflow-auto bg-white rounded-md shadow-lg"style={{overflowX: "auto"}}>
           <table className="min-w-full border-collapse">
             <thead>
               <tr className="bg-gray-200">
