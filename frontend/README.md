@@ -5,7 +5,6 @@
 ![Node](https://img.shields.io/badge/Backend-Node.js-brightgreen)
 ![MongoDB](https://img.shields.io/badge/Database-MongoDB-green)
 ![JWT](https://img.shields.io/badge/Auth-JWT-orange)
-![License](https://img.shields.io/badge/License-MIT-yellow)
 
 A full-stack **MERN-based Library Management System** designed to handle real-world workflows with **secure authentication, automation, and role-based dashboards**.
 
@@ -251,8 +250,3 @@ If you like this project, consider giving it a ⭐ on GitHub!
 
 ---
 
-## 📌 License
-
-This project is licensed under the MIT License.
-
----

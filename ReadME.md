@@ -5,7 +5,6 @@
 ![Node](https://img.shields.io/badge/Backend-Node.js-brightgreen)
 ![MongoDB](https://img.shields.io/badge/Database-MongoDB-green)
 ![JWT](https://img.shields.io/badge/Auth-JWT-orange)
-![License](https://img.shields.io/badge/License-MIT-yellow)
 
 A full-stack **MERN-based Library Management System** designed to handle real-world workflows with **secure authentication, automation, and role-based dashboards**.
 
@@ -225,14 +224,14 @@ npm run dev
 * Integrated Cloudinary for image storage and cropping
 * Used cron jobs for automation tasks
 * Developed responsive UI using React & Tailwind
+* Advanced filtering & search
+* Real-time notifications
 
 ---
 
 ## 🔮 Future Improvements
 
 * AI-based book recommendation system
-* Advanced filtering & search
-* Real-time notifications
 * Mobile application
 
 ---
@@ -248,11 +247,5 @@ npm run dev
 ## ⭐ Support
 
 If you like this project, consider giving it a ⭐ on GitHub!
-
----
-
-## 📌 License
-
-This project is licensed under the MIT License.
 
 ---
