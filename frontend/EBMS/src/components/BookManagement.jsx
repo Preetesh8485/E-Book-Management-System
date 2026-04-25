@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BookA, NotebookPen, ChevronLeft, ChevronRight } from "lucide-react";
+import { BookA, NotebookPen, ChevronLeft, ChevronRight, Search, Plus, BookOpen } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleAddBookPopup, toggleReadBookPopup, toggleRecordBookPopup } from "../store/slices/popupSlice";
 import { toast } from "react-toastify";
@@ -17,7 +17,6 @@ const BookManagement = () => {
   const { addBookPopup, readBookPopup, recordPopup } = useSelector(state => state.popup);
   const { loading: borrowSliceLoading, error: borrowSliceError, message: borrowSliceMessage } = useSelector(state => state.borrow);
 
-  // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 10;
 
@@ -52,7 +51,7 @@ const BookManagement = () => {
   const [searchedKeyword, setSearchedKeyword] = useState("");
   const handleSearch = (e) => {
     setSearchedKeyword(e.target.value.toLowerCase());
-    setCurrentPage(1); // Reset to first page on search
+    setCurrentPage(1); 
   };
 
   const searchedBooks = books.filter((book) =>
@@ -62,7 +61,6 @@ const BookManagement = () => {
     String(book.ISBN)?.toLowerCase().includes(searchedKeyword)
   );
 
-  // Pagination Logic
   const indexOfLastBook = currentPage * booksPerPage;
   const indexOfFirstBook = indexOfLastBook - booksPerPage;
   const currentBooks = searchedBooks.slice(indexOfFirstBook, indexOfLastBook);
@@ -76,59 +74,113 @@ const BookManagement = () => {
     <>
       <main className="relative flex-1 p-6 pt-28">
         <Header />
-        <header className="flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
-          <h2 className="text-xl font-medium md:text-2xl md:font-semibold">
-            {user && user.role === "Admin" ? "Book Management" : "Books"}
-          </h2>
-          <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
+        
+        {/* Modern Header Section */}
+        <header className="flex flex-col gap-4 mb-8 md:flex-row md:justify-between md:items-end border-b border-gray-100 pb-6">
+          <div>
+            <h2 className="text-2xl font-black text-gray-800 tracking-tight flex items-center gap-2">
+              <BookOpen className="text-[#00A7E1]" size={28} />
+              {user && user.role === "Admin" ? "Book Management" : "Library Collection"}
+            </h2>
+            <p className="text-sm text-gray-400 font-medium">Explore and manage the digital repository</p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative group">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#00A7E1] transition-colors" size={18} />
+              <input 
+                type="text" 
+                placeholder="Search by title, author, ISBN..." 
+                className="w-full sm:w-64 pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#00A7E1]/20 focus:border-[#00A7E1] outline-none transition-all text-sm"
+                value={searchedKeyword} 
+                onChange={handleSearch} 
+              />
+            </div>
+
             {isAuthenticated && user?.role === "Admin" && (
-              <button onClick={() => dispatch(toggleAddBookPopup())} className="relative p-14 w-full sm:w-52 gap-4 justify-center items-center py-2 px-4 bg-black text-white rounded-md hover:bg-white hover:text-black border-2 border-black transition duration-200">
-                <span className="bg-white flex justify-center items-center overflow-hidden rounded-full text-black w-6.25 h-6.25 absolute left-5">+</span>
-                ADD Book
+              <button 
+                onClick={() => dispatch(toggleAddBookPopup())} 
+                className="flex items-center justify-center gap-2 py-2.5 px-6 bg-black text-white text-sm font-bold rounded-xl hover:bg-gray-800 transform active:scale-95 transition-all shadow-md shadow-black/10"
+              >
+                <Plus size={18} />
+                ADD BOOK
               </button>
             )}
-            <input type="text" placeholder="Search books" className="w-full sm:w-52 border p-2 border-gray-300 rounded-md" value={searchedKeyword} onChange={handleSearch} />
           </div>
         </header>
 
         {searchedBooks && searchedBooks.length > 0 ? (
-          <div className="mt-6 bg-white rounded-md shadow-lg overflow-hidden">
-            <div className="overflow-x-auto"style={{overflowX: "auto"}}>
-              <table className="min-w-full border-collapse">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full">
                 <thead>
-                  <tr className="bg-gray-200">
-                    <th className="px-4 py-4 text-left">ID</th>
-                    <th className="px-4 py-4 text-left">Name</th>
-                    <th className="px-4 py-4 text-left">Author</th>
-                    <th className="px-4 py-4 text-left">Location</th>
-                    <th className="px-4 py-4 text-left">ISBN</th>
+                  <tr className="bg-gray-50 border-b border-gray-100">
+                    <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">ID</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Book Details</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Location</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">ISBN</th>
                     {isAuthenticated && user?.role === "Admin" && (
-                      <th className="px-4 py-2 text-left">Quantity</th>
+                      <th className="px-6 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Stock</th>
                     )}
-                    <th className="px-4 py-4 text-left">Price</th>
-                    <th className="px-4 py-4 text-left">Availability</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Price</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
                     {isAuthenticated && user?.role === "Admin" && (
-                      <th className="px-4 py-2 text-left">Record Book</th>
+                      <th className="px-6 py-4 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
                     )}
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-gray-50">
                   {currentBooks.map((book, index) => (
-                    <tr key={book._id} className={(index + 1) % 2 === 0 ? "bg-gray-50" : ""}>
-                      <td className="px-4 py-2">{indexOfFirstBook + index + 1}</td>
-                      <td className="px-4 py-2">{book.title}</td>
-                      <td className="px-4 py-2">{book.author}</td>
-                      <td className="px-4 py-2">{book.location}</td>
-                      <td className="px-4 py-2">{book.ISBN}</td>
+                    <tr key={book._id} className="hover:bg-gray-50/50 transition-colors group">
+                      <td className="px-6 py-4 text-sm font-bold text-gray-300">
+                        {(indexOfFirstBook + index + 1).toString().padStart(2, '0')}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-bold text-gray-800 line-clamp-1">{book.title}</span>
+                          <span className="text-xs text-gray-400 font-medium">{book.author}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600">
+                          {book.location}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-xs font-mono text-gray-500 tracking-tighter">{book.ISBN}</td>
                       {isAuthenticated && user?.role === "Admin" && (
-                        <td className="px-4 py-2 text-center">{book.quantity}</td>
+                        <td className="px-6 py-4 text-center">
+                          <span className={`text-sm font-black ${book.quantity < 5 ? 'text-red-500' : 'text-gray-700'}`}>
+                            {book.quantity}
+                          </span>
+                        </td>
                       )}
-                      <td className="px-4 py-2">₹{book.price}</td>
-                      <td className="px-4 py-2">{book.availability ? "Available" : "Unavailable"}</td>
+                      <td className="px-6 py-4 text-sm font-black text-gray-800">₹{book.price}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-1.5 h-1.5 rounded-full ${book.availability ? "bg-green-500 animate-pulse" : "bg-red-400"}`} />
+                          <span className={`text-[11px] font-bold uppercase ${book.availability ? "text-green-600" : "text-red-400"}`}>
+                            {book.availability ? "In Stock" : "Out of Stock"}
+                          </span>
+                        </div>
+                      </td>
                       {isAuthenticated && user?.role === "Admin" && (
-                        <td className="px-4 py-2 flex space-x-2">
-                          <BookA onClick={() => openReadPopup(book._id)} className="cursor-pointer" />
-                          <NotebookPen onClick={() => openRecordBookpopup(book._id)} className="cursor-pointer" />
+                        <td className="px-6 py-4">
+                          <div className="flex items-center justify-end space-x-3">
+                            <button 
+                              onClick={() => openReadPopup(book._id)}
+                              className="p-2 text-gray-400 hover:text-[#00A7E1] hover:bg-[#00A7E1]/5 rounded-lg transition-all"
+                              title="View Details"
+                            >
+                              <BookA size={18} />
+                            </button>
+                            <button 
+                              onClick={() => openRecordBookpopup(book._id)}
+                              className="p-2 text-gray-400 hover:text-[#FFA630] hover:bg-[#FFA630]/5 rounded-lg transition-all"
+                              title="Record Transaction"
+                            >
+                              <NotebookPen size={18} />
+                            </button>
+                          </div>
                         </td>
                       )}
                     </tr>
@@ -137,38 +189,42 @@ const BookManagement = () => {
               </table>
             </div>
 
-            {/* Pagination Controls */}
-            <div className="flex items-center justify-between px-4 py-4 border-t border-gray-200">
-              <div className="text-sm text-gray-700">
-                Showing <span className="font-medium">{indexOfFirstBook + 1}</span> to{" "}
-                <span className="font-medium">
-                  {Math.min(indexOfLastBook, searchedBooks.length)}
-                </span>{" "}
-                of <span className="font-medium">{searchedBooks.length}</span> results
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                  className={`p-2 border rounded-md ${currentPage === 1 ? "text-gray-300 cursor-not-allowed" : "hover:bg-gray-100 border-black"}`}
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                <div className="flex items-center px-2 text-sm font-medium">
-                  Page {currentPage} of {totalPages || 1}
+            {/* Styled Pagination Controls */}
+            <div className="flex items-center justify-between px-6 py-5 bg-gray-50/50 border-t border-gray-100">
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                Showing <span className="text-gray-800">{indexOfFirstBook + 1}</span> - <span className="text-gray-800">{Math.min(indexOfLastBook, searchedBooks.length)}</span> of {searchedBooks.length}
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="text-[11px] font-black text-gray-500 uppercase tracking-tighter">
+                  Page {currentPage} / {totalPages || 1}
                 </div>
-                <button
-                  disabled={currentPage === totalPages || totalPages === 0}
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                  className={`p-2 border rounded-md ${currentPage === totalPages || totalPages === 0 ? "text-gray-300 cursor-not-allowed" : "hover:bg-gray-100 border-black"}`}
-                >
-                  <ChevronRight size={20} />
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    className={`p-2 rounded-lg border transition-all ${currentPage === 1 ? "bg-gray-100 border-gray-200 text-gray-300 cursor-not-allowed" : "bg-white border-gray-300 text-gray-700 hover:border-black active:scale-90"}`}
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <button
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    className={`p-2 rounded-lg border transition-all ${currentPage === totalPages || totalPages === 0 ? "bg-gray-100 border-gray-200 text-gray-300 cursor-not-allowed" : "bg-white border-gray-300 text-gray-700 hover:border-black active:scale-90"}`}
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         ) : (
-          <h3 className="text-3xl mt-5 font-medium">No books found in library!</h3>
+          <div className="mt-20 flex flex-col items-center justify-center text-center">
+            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+              <Search className="text-gray-200" size={40} />
+            </div>
+            <h3 className="text-xl font-bold text-gray-800 tracking-tight">No books found in library!</h3>
+            <p className="text-sm text-gray-400">Try adjusting your search keyword or filters.</p>
+          </div>
         )}
       </main>
 

@@ -1,10 +1,7 @@
 import React from "react";
-import logo_with_title from "../assets/logo-with-title-black.png";
-import returnIcon from "../assets/redo.png";
-import browseIcon from "../assets/pointing.png";
-import bookIcon from "../assets/book-square.png";
 import { Pie } from "react-chartjs-2";
 import Header from "../layout/Header";
+import { Book, RotateCcw, Clock, BookOpenCheck, Flame, CalendarDays } from "lucide-react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -17,7 +14,6 @@ import {
   PointElement,
   ArcElement,
 } from "chart.js";
-import logo from "../assets/black-logo.png";
 import { useSelector } from "react-redux";
 
 ChartJS.register(
@@ -36,132 +32,171 @@ const UserDashboard = () => {
   const { userBorrowedBooks } = useSelector((state) => state.borrow);
   const safeBorrowedBooks = userBorrowedBooks || [];
   
-  // Derived state for counts
-  const totalBorrowedBooks = safeBorrowedBooks.filter((book) => !book.returned).length;
-  const totalReturnedBooks = safeBorrowedBooks.filter((book) => book.returned).length;
+  const returnedBooks = safeBorrowedBooks.filter((book) => book.returned === true);
+  const nonReturnedBooks = safeBorrowedBooks.filter((book) => book.returned === false);
+
+  const totalBorrowedBooks = nonReturnedBooks.length;
+  const totalReturnedBooks = returnedBooks.length;
+
+  const formatDate = (timeStamp) => {
+    if (!timeStamp) return "N/A";
+    const date = new Date(timeStamp);
+    return `${String(date.getDate()).padStart(2, "0")}-${String(
+      date.getMonth() + 1
+    ).padStart(2, "0")}-${date.getFullYear()}`;
+  };
 
   const data = {
-    labels: ["Total Borrowed Book", "Total Returned Books"],
+    labels: ["Active Loans", "Returned"],
     datasets: [
       {
         data: [totalBorrowedBooks, totalReturnedBooks],
         backgroundColor: ["#FFA630", "#00A7E1"],
-        hoverOffset: 4,
+        hoverOffset: 10,
+        borderWidth: 0,
       }
     ]
   };
 
   return (
     <>
-      {/* Reduced pt-28 to pt-20 to reclaim top space */}
-      <main className="relative flex-1 p-6 pt-20">
+      <main className="relative flex-1 p-6 pt-24 bg-gray-200 min-h-screen flex flex-col items-center overflow-y-auto w-full">
         <Header />
-        <div className="flex flex-col-reverse xl:flex-row">
-          {/* Reduced gap-7 to gap-4 and adjusted min-h for 100% zoom fit */}
-          <div className="flex flex-4 flex-col gap-4 lg:py-5 justify-between xl:min-h-[82vh]">
-
-            <div className="flex flex-col gap-4 flex-4">
-
-              <div className="flex flex-col lg:flow-row gap-4 overflow-y-hidden">
-
-                {/* Borrowed Books - Adjusted p-5 to p-4 */}
-                <div className="flex items-center gap-3 bg-white p-4 min-h-28 overflow-y-hidden rounded-lg transition hover:shadow-inner duration-300">
-                  <span className="w-0.5 bg-black h-16 lg:h-full"></span>
-
-                  <span className="bg-gray-300 h-16 lg:h-full min-w-20 flex justify-center items-center rounded-lg">
-                    <img src={bookIcon} alt="book-icon" className="w-8 h-8" />
-                  </span>
-
-                  <div className="flex flex-1 items-center justify-between">
-                    <p className="text-lg xl:text-xl font-semibold">
-                      Your Borrowed Book List
-                    </p>
-
-                    <div className="flex flex-col items-center justify-center bg-gray-100 px-4 py-1 rounded-lg border border-gray-200 min-w-[60px]">
-                      <span className="text-[10px] uppercase text-gray-500 font-bold">Total</span>
-                      <span className="text-xl font-bold text-black">{totalBorrowedBooks}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Returned Books - Adjusted p-5 to p-4 */}
-                <div className="flex items-center gap-3 bg-white p-4 min-h-28 overflow-y-hidden rounded-lg transition hover:shadow-inner duration-300">
-                  <span className="w-0.5 bg-black h-16 lg:h-full"></span>
-
-                  <span className="bg-gray-300 h-16 lg:h-full min-w-20 flex justify-center items-center rounded-lg">
-                    <img src={returnIcon} alt="book-icon" className="w-8 h-8" />
-                  </span>
-
-                  <div className="flex flex-1 items-center justify-between">
-                    <p className="text-lg xl:text-xl font-semibold">
-                      Your Returned Book List
-                    </p>
-
-                    <div className="flex flex-col items-center justify-center bg-gray-100 px-4 py-1 rounded-lg border border-gray-200 min-w-15">
-                      <span className="text-[10px] uppercase text-gray-500 font-bold">Total</span>
-                      <span className="text-xl font-bold text-black">{totalReturnedBooks}</span>
-                    </div>
-                  </div>
-                </div>
-
+        
+        <div className="max-w-7xl w-full space-y-6">
+          
+          {/* Top Section: Information Display Only */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Books to Read</p>
+                <h3 className="text-3xl font-black text-gray-900">{totalBorrowedBooks}</h3>
               </div>
+              <div className="p-4 bg-orange-50 text-[#FFA630] rounded-xl">
+                <Book size={28} />
+              </div>
+            </div>
 
-              {/* Bottom Section - Reduced gap to 4 */}
-              <div className="flex flex-col lg:flex-row gap-4">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Lifetime Returns</p>
+                <h3 className="text-3xl font-black text-gray-900">{totalReturnedBooks}</h3>
+              </div>
+              <div className="p-4 bg-blue-50 text-[#00A7E1] rounded-xl">
+                <RotateCcw size={28} />
+              </div>
+            </div>
 
-                <div className="flex items-center gap-3 bg-white p-4 max-h-28 overflow-y-hidden rounded-lg transition hover:shadow-inner duration-300">
-                  <span className="w-0.5 bg-black h-16 lg:h-full"></span>
-
-                  <span className="bg-gray-300 h-16 lg:h-full min-w-20 flex justify-center items-center rounded-lg">
-                    <img src={browseIcon} alt="book-icon" className="w-8 h-8" />
-                  </span>
-
-                  <p className="text-lg xl:text-xl font-semibold">
-                    Let's browse books inventory
+            {/* Functional Utility Card: Current Status/Streak */}
+            <div className="bg-gray-900 p-6 rounded-2xl shadow-lg flex items-center justify-between text-white">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-orange-500/20 text-orange-400 rounded-lg">
+                  <Flame size={24} />
+                </div>
+                <div className="text-left">
+                  <p className="font-bold text-lg leading-tight">Reading Status</p>
+                  <p className="text-xs text-gray-400">
+                    {totalBorrowedBooks > 0 ? "Currently Active" : "No active loans"}
                   </p>
                 </div>
+              </div>
+              <div className="text-right">
+                <span className="text-2xl font-black text-orange-400 tracking-tighter">Active</span>
+              </div>
+            </div>
+          </div>
 
-                <img
-                  src={logo_with_title}
-                  alt="logo"
-                  className="hidden lg:block w-auto justify-end h-24"
-                />
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+            
+            {/* Utility Side: Summary & Distribution */}
+            <div className="xl:col-span-4 space-y-6">
+              <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center">
+                <h4 className="text-gray-900 font-black text-lg mb-8 self-start uppercase tracking-tighter">Library Usage</h4>
+                <div className="w-full max-w-[220px] py-4">
+                  <Pie 
+                    data={data} 
+                    options={{ 
+                      cutout: '75%',
+                      plugins: { legend: { display: false } }
+                    }} 
+                  />
+                </div>
+                <div className="w-full space-y-3 mt-6">
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#FFA630]"></div>
+                      <span className="text-sm font-bold text-gray-600">Pending Return</span>
+                    </div>
+                    <span className="font-black text-gray-900">{totalBorrowedBooks}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2.5 h-2.5 rounded-full bg-[#00A7E1]"></div>
+                      <span className="text-sm font-bold text-gray-600">Successfully Returned</span>
+                    </div>
+                    <span className="font-black text-gray-900">{totalReturnedBooks}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Utility Quick-Check: Due Dates Info */}
+              <div className="bg-[#0047AB] p-6 rounded-3xl text-white">
+                <div className="flex items-center gap-3 mb-4">
+                  <CalendarDays size={20} className="text-blue-200" />
+                  <h4 className="font-bold text-sm uppercase tracking-widest">Library Policy</h4>
+                </div>
+                <p className="text-xs text-blue-100 leading-relaxed">
+                  Ensure all active loans are returned before the specific due dates to maintain your membership standing.
+                </p>
               </div>
             </div>
 
-            {/* Footer Card - Tightened min-height */}
-            <div className="bg-white p-6 text-lg sm:text-xl xl:text-3xl 2xl:text-4xl min-h-40 font-semibold relative flex-[3] flex justify-center items-center rounded-2xl">
-              <h4 className="overflow-y-hidden text-center">"Digitizing knowledge, simplifying discovery."</h4>
-
-              <p className="text-gray-700 text-sm sm:text-lg absolute right-8 bottom-2">
-                ~ Digital Library Team
-              </p>
-            </div>
-
-          </div>
-
-          {/* Right side - Tightened gaps */}
-          <div className="flex-2 flex-col gap-4 lg:flex-row flex lg:items-center xl:flex-col justify-between xl:gap-10 py-5">
-            <div className="xl:flex-4 flex items-end w-full content-center">
-              <Pie
-                data={data}
-                options={{ cutout: 0 }}
-                className="mx-auto lg:mx-0 w-full max-h-64 h-auto"
-              />
-            </div>
-
-            <div className="flex items-center p-6 w-full sm:w-100 xl:w-fit mr-5 xl:p-4 gap-5 h-fit bg-white xl:flex-1 rounded-lg">
-              <img src={logo} alt="logo" className="w-auto h-12 2xl:h-16" />
-              <span className="w-0.5 bg-black h-full"></span>
-              <div className="flex flex-col gap-3">
-                <p className="flex items-center gap-3">
-                  <span className="w-3 h-3 rounded-full bg-[#FFA630]"></span>
-                  <span className="text-sm font-medium">Total Borrowed Books</span>
-                </p>
-                <p className="flex items-center gap-3">
-                  <span className="w-3 h-3 rounded-full bg-[#00A7E1]"></span>
-                  <span className="text-sm font-medium">Total Returned Books</span>
-                </p>
+            {/* Functional Data Table: Recent History */}
+            <div className="xl:col-span-8 bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+              <div className="flex items-center justify-between mb-8">
+                <h4 className="text-gray-900 font-black text-lg uppercase tracking-tighter">Transaction Log</h4>
+                <div className="p-2 bg-gray-50 rounded-lg text-gray-400">
+                  <Clock size={20} />
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                {safeBorrowedBooks.length > 0 ? (
+                  [...safeBorrowedBooks].reverse().slice(0, 6).map((book, i) => (
+                    <div 
+                      key={i} 
+                      className="flex items-center justify-between p-4 rounded-2xl bg-gray-50/50 border border-gray-200"
+                    >
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${book.returned ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'}`}>
+                          {book.returned ? <BookOpenCheck size={20} /> : <Book size={20} />}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-bold text-gray-800 truncate pr-4">{book.BookTitle || "Library Resource"}</p>
+                          <div className="flex items-center gap-3 mt-1">
+                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                              Borrowed: {formatDate(book.borrowedDate)}
+                            </span>
+                            {!book.returned && (
+                              <span className="text-[10px] bg-red-50 text-red-500 px-2 py-0.5 rounded font-black">
+                                ACTIVE LOAN
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className={`text-[10px] font-black tracking-tighter ${book.returned ? 'text-blue-500' : 'text-orange-500'}`}>
+                          {book.returned ? 'COMPLETED' : 'IN PROGRESS'}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-20 border-2 border-dashed border-gray-100 rounded-2xl">
+                    <p className="text-gray-400 font-medium italic">No activity recorded in the database.</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
