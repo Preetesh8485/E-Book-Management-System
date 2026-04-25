@@ -58,6 +58,7 @@ const BookManagement = () => {
   const searchedBooks = books.filter((book) =>
     book.title?.toLowerCase().includes(searchedKeyword) ||
     book.author?.toLowerCase().includes(searchedKeyword) ||
+    book.location?.toLowerCase().includes(searchedKeyword) ||
     String(book.ISBN)?.toLowerCase().includes(searchedKeyword)
   );
 
