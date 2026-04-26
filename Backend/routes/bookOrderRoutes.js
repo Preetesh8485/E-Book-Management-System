@@ -1,7 +1,7 @@
 import express from "express";
 import { isAuthenticated } from "../middlewear/authMiddlewear.js";
 import { isAuthorized } from "../controllers/authController.js";
-import { createOrder, getAllOrders, markOrderDelivered} from "../controllers/bookContoller.js";
+import { createOrder, deleteOrder, getAllOrders, markOrderDelivered} from "../controllers/bookContoller.js";
 
 const OrderRouter = express.Router();
 
@@ -18,7 +18,7 @@ OrderRouter.put(
     markOrderDelivered
 );
 OrderRouter.get("/all",isAuthenticated,
-    isAuthorized("Admin"),getAllOrders)
-
-
+    isAuthorized("Admin"),getAllOrders
+);
+OrderRouter.delete("/delete/:id", isAuthenticated, isAuthorized("Admin"), deleteOrder);
 export default OrderRouter;

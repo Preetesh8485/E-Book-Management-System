@@ -6,9 +6,9 @@ import { toast } from "react-toastify";
 import { fetchAllBooks, resetBookSlice } from "../store/slices/bookSlice";
 import { fetchAllBorrowedBooks, resetBorrowSlice } from "../store/slices/borrowSlice";
 import Header from "../layout/Header";
-import AddBookPopup from "../popup/AddBookPopup"; 
-import ReadBookPopup from "../popup/ReadBookPopup"; 
-import RecordBookPopup from "../popup/RecordBookPopup"; 
+import AddBookPopup from "../popup/AddBookPopup";
+import ReadBookPopup from "../popup/ReadBookPopup";
+import RecordBookPopup from "../popup/RecordBookPopup";
 
 const BookManagement = () => {
   const dispatch = useDispatch();
@@ -51,7 +51,7 @@ const BookManagement = () => {
   const [searchedKeyword, setSearchedKeyword] = useState("");
   const handleSearch = (e) => {
     setSearchedKeyword(e.target.value.toLowerCase());
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   const searchedBooks = books.filter((book) =>
@@ -74,7 +74,7 @@ const BookManagement = () => {
     <>
       <main className="relative flex-1 p-6 pt-28">
         <Header />
-        
+
         {/* Modern Header Section */}
         <header className="flex flex-col gap-4 mb-8 md:flex-row md:justify-between md:items-end border-b border-gray-100 pb-6">
           <div>
@@ -88,18 +88,18 @@ const BookManagement = () => {
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative group">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#00A7E1] transition-colors" size={18} />
-              <input 
-                type="text" 
-                placeholder="Search by title, author, ISBN..." 
+              <input
+                type="text"
+                placeholder="Search by title, author, ISBN..."
                 className="w-full sm:w-64 pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#00A7E1]/20 focus:border-[#00A7E1] outline-none transition-all text-sm"
-                value={searchedKeyword} 
-                onChange={handleSearch} 
+                value={searchedKeyword}
+                onChange={handleSearch}
               />
             </div>
 
             {isAuthenticated && user?.role === "Admin" && (
-              <button 
-                onClick={() => dispatch(toggleAddBookPopup())} 
+              <button
+                onClick={() => dispatch(toggleAddBookPopup())}
                 className="flex items-center justify-center gap-2 py-2.5 px-6 bg-black text-white text-sm font-bold rounded-xl hover:bg-gray-800 transform active:scale-95 transition-all shadow-md shadow-black/10"
               >
                 <Plus size={18} />
@@ -131,14 +131,26 @@ const BookManagement = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {currentBooks.map((book, index) => (
-                    <tr key={book._id} className="hover:bg-gray-50/50 transition-colors group">
+                    <tr key={book._id} className="hover:bg-gray-100 transition-colors group">
                       <td className="px-6 py-4 text-sm font-bold text-gray-300">
                         {(indexOfFirstBook + index + 1).toString().padStart(2, '0')}
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex flex-col">
-                          <span className="text-sm font-bold text-gray-800 line-clamp-1">{book.title}</span>
-                          <span className="text-xs text-gray-400 font-medium">{book.author}</span>
+                        <div className="flex items-center gap-3">
+
+                          {/* ✅ BOOK IMAGE */}
+                          <img
+                            src={book.image?.url}
+                            alt="book"
+                            className="w-20 h-28 object-cover rounded-md"
+                          />
+
+                          {/* TEXT (UNCHANGED) */}
+                          <div className="flex flex-col">
+                            <span className="text-sm font-bold text-gray-800 line-clamp-1">{book.title}</span>
+                            <span className="text-xs text-gray-400 font-medium">{book.author}</span>
+                          </div>
+
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -166,14 +178,14 @@ const BookManagement = () => {
                       {isAuthenticated && user?.role === "Admin" && (
                         <td className="px-6 py-4">
                           <div className="flex items-center justify-end space-x-3">
-                            <button 
+                            <button
                               onClick={() => openReadPopup(book._id)}
                               className="p-2 text-gray-400 hover:text-[#00A7E1] hover:bg-[#00A7E1]/5 rounded-lg transition-all"
                               title="View Details"
                             >
                               <BookA size={18} />
                             </button>
-                            <button 
+                            <button
                               onClick={() => openRecordBookpopup(book._id)}
                               className="p-2 text-gray-400 hover:text-[#FFA630] hover:bg-[#FFA630]/5 rounded-lg transition-all"
                               title="Record Transaction"

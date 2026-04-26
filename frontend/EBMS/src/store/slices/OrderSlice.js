@@ -62,6 +62,20 @@ const orderSlice = createSlice({
             state.error = null;
             state.message = null;
         },
+        deleteOrderReq(state) {
+            state.loading = true;
+            state.error = null;
+            state.message = null;
+        },
+        deleteOrderSuccess(state, action) {
+            state.loading = false;
+            state.message = action.payload.message;
+            state.orders = state.orders.filter(order => order._id !== action.payload.id);
+        },
+        deleteOrderFail(state, action) {
+            state.loading = false;
+            state.error = action.payload;
+        },
     },
 });
 
@@ -130,6 +144,26 @@ export const getAllOrders = () => async (dispatch) => {
         dispatch(
             orderSlice.actions.getOrdersFail(
                 error.response?.data?.message || "Something went wrong"
+            )
+        );
+    }
+};
+// DELETE ORDER THUNK
+export const deleteOrder = (id) => async (dispatch) => {
+    try {
+        dispatch(orderSlice.actions.deleteOrderReq());
+
+        const res = await axios.delete(
+            `http://localhost:4000/api/order/delete/${id}`,
+            { withCredentials: true }
+        );
+
+        // We pass the id along with the response data so the reducer knows which one to remove
+        dispatch(orderSlice.actions.deleteOrderSuccess({ ...res.data, id }));
+    } catch (error) {
+        dispatch(
+            orderSlice.actions.deleteOrderFail(
+                error.response?.data?.message || "Failed to delete order"
             )
         );
     }

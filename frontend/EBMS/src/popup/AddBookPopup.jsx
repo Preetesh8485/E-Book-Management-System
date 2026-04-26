@@ -5,7 +5,7 @@ import { toggleAddBookPopup } from "../store/slices/popupSlice";
 
 const AddBookPopup = () => {
   const dispatch = useDispatch();
-  
+
   // Logic for the smooth transition state
   const [show, setShow] = useState(false);
 
@@ -22,6 +22,8 @@ const AddBookPopup = () => {
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
   const [description, setDescription] = useState("");
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
 
   const handleClose = () => {
     setShow(false);
@@ -42,7 +44,8 @@ const AddBookPopup = () => {
     formData.append("price", price);
     formData.append("quantity", quantity);
     formData.append("description", description);
-    
+    formData.append("image", image);
+
     dispatch(addBook(formData));
     dispatch(fetchAllBooks());
     handleClose();
@@ -50,11 +53,11 @@ const AddBookPopup = () => {
 
   return (
     <>
-      <div 
+      <div
         className={`fixed inset-0 p-5 flex items-center justify-center z-50 transition-all duration-300 ease-in-out
         ${show ? "bg-black/50 backdrop-blur-sm" : "bg-black/0 backdrop-blur-none"}`}
       >
-        <div 
+        <div
           className={`w-full bg-white rounded-lg shadow-lg md:w-1/3 transform transition-all duration-300 ease-in-out
           ${show ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
         >
@@ -63,6 +66,34 @@ const AddBookPopup = () => {
 
             <form onSubmit={handleAddBook}>
               <div className="mb-4">
+                <div className="flex flex-col items-center mb-4">
+
+                  {/* Image Preview */}
+                  <div className="w-24 h-32 rounded-md overflow-hidden border-2 border-gray-300 mb-2">
+                    <img
+                      src={preview || "https://via.placeholder.com/100"}
+                      alt="preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  {/* Upload Button */}
+                  <label className="cursor-pointer text-sm font-medium text-[#00A7E1]">
+                    Upload Front Page
+                    <input
+                      type="file"
+                      accept="image/*"
+                      required
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        setImage(file);
+                        setPreview(URL.createObjectURL(file));
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+
+                </div>
                 <label className="block text-gray-900 font-medium">
                   Book Title
                 </label>
@@ -90,12 +121,12 @@ const AddBookPopup = () => {
                 <label className="block text-gray-900 font-medium">
                   Book Description
                 </label>
-                <textarea value={description} onChange={(e)=>{setDescription(e.target.value)}} placeholder="About Book" rows={4} className="w-full px-4 py-2 border border-black rounded-md"/>
+                <textarea value={description} onChange={(e) => { setDescription(e.target.value) }} placeholder="About Book" rows={4} className="w-full px-4 py-2 border border-black rounded-md" />
               </div>
               <div className="flex justify-end space-x-4">
-                <button 
-                  className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300" 
-                  type="button" 
+                <button
+                  className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
+                  type="button"
                   onClick={handleClose}
                 >
                   Close

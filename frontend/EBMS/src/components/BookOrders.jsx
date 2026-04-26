@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllOrders, markOrderDelivered } from "../store/slices/OrderSlice";
+import { deleteOrder, getAllOrders, markOrderDelivered } from "../store/slices/OrderSlice";
 import Header from "../layout/Header";
 import { toggleOrderBookPopup } from "../store/slices/popupSlice"
 import AddNewOrderPopup from "../popup/AddNewOrderPopup";
-import { Search, ShoppingBag, Truck, CheckCircle2, Calendar } from "lucide-react";
+import { Search, ShoppingBag, Truck, CheckCircle2, Calendar, Trash2 } from "lucide-react";
 
 const BookOrders = () => {
   const dispatch = useDispatch();
@@ -62,7 +62,7 @@ const BookOrders = () => {
           </h1>
           <p className="text-sm text-gray-400 font-medium">Manage incoming stock and vendor invoices</p>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <div className="relative w-full md:w-72 group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#FFA630] transition-colors" size={18} />
@@ -86,8 +86,8 @@ const BookOrders = () => {
       {/* Content Area */}
       {loading ? (
         <div className="flex flex-col items-center justify-center mt-20 gap-4">
-           <div className="w-8 h-8 border-4 border-[#FFA630] border-t-transparent rounded-full animate-spin"></div>
-           <h2 className="text-gray-400 font-bold uppercase text-xs tracking-widest">Fetching Order Ledger</h2>
+          <div className="w-8 h-8 border-4 border-[#FFA630] border-t-transparent rounded-full animate-spin"></div>
+          <h2 className="text-gray-400 font-bold uppercase text-xs tracking-widest">Fetching Order Ledger</h2>
         </div>
       ) : filteredOrders.length > 0 ? (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -129,11 +129,10 @@ const BookOrders = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${
-                        order.OrderDelivery === "Delivered" 
-                          ? "bg-green-100 text-green-600" 
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${order.OrderDelivery === "Delivered"
+                          ? "bg-green-100 text-green-600"
                           : "bg-yellow-100 text-yellow-600 animate-pulse"
-                      }`}>
+                        }`}>
                         {order.OrderDelivery === "Delivered" ? <CheckCircle2 size={12} /> : <Truck size={12} />}
                         {order.OrderDelivery}
                       </span>
@@ -155,6 +154,17 @@ const BookOrders = () => {
                       ) : (
                         <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Complete</span>
                       )}
+                      <button
+                        onClick={() => {
+                          if (window.confirm("Are you sure you want to delete this order record?")) {
+                            dispatch(deleteOrder(order._id));
+                          }
+                        }}
+                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all active:scale-90"
+                        title="Delete Order"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </td>
                   </tr>
                 ))}
