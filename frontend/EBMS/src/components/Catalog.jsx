@@ -14,10 +14,10 @@ const Catalog = () => {
   const dispatch = useDispatch();
   const { returnPopup } = useSelector((state) => state.popup);
   const { error, allBorrowedBooks, message } = useSelector((state) => state.borrow);
-  
+
   const [filter, setFilter] = useState("borrowed");
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -43,7 +43,7 @@ const Catalog = () => {
   };
 
   const currentDate = new Date();
-  
+
   // 1. Filter logic
   const filteredData = allBorrowedBooks?.filter(book => {
     const dueDate = new Date(book.dueDate);
@@ -101,7 +101,7 @@ const Catalog = () => {
     <>
       <main className="relative flex-1 p-6 pt-28">
         <Header />
-        
+
         <header className="flex flex-col gap-6 md:flex-row md:items-end justify-between border-b border-gray-100 pb-8">
           <div>
             <h2 className="text-2xl font-black text-gray-800 tracking-tight flex items-center gap-2">
@@ -148,6 +148,9 @@ const Catalog = () => {
                   <tr className="bg-gray-50 border-b border-gray-100">
                     <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">#</th>
                     <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Student Information</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      Borrowed Book
+                    </th>
                     <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Schedule</th>
                     <th className="px-6 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Fine</th>
                     <th className="px-6 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
@@ -169,6 +172,16 @@ const Catalog = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-bold text-gray-800">
+                              {book?.book?.title}
+                            </span>
+                          </div>
+
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
                         <div className="flex flex-col text-[11px]">
                           <span className="font-bold text-gray-700">Due: {formatDate(book.dueDate)}</span>
                           <span className="text-gray-400">Issued: {formatDateandTime(book.borrowDate)}</span>
@@ -185,9 +198,8 @@ const Catalog = () => {
                             <CheckCircle2 size={12} /> Returned
                           </span>
                         ) : (
-                          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase ${
-                            filter === "overDue" ? "bg-red-100 text-red-600 animate-pulse" : "bg-blue-100 text-blue-600"
-                          }`}>
+                          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase ${filter === "overDue" ? "bg-red-100 text-red-600 animate-pulse" : "bg-blue-100 text-blue-600"
+                            }`}>
                             <AlertCircle size={12} /> {filter === "overDue" ? "Overdue" : "Pending"}
                           </span>
                         )}

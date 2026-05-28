@@ -14,6 +14,8 @@ import{v2 as cloudinary}from "cloudinary";
 import expressFileupload from "express-fileupload"
 import { notifyUser } from "./utils/notifyUsers.js";
 import { removedUnverifiedAccounts } from "./utils/removeUnverifiedAccount.js";
+import Wishrouter from "./routes/wishlistRoutes.js";
+import { notifyWishlistUsers } from "./utils/wishlistcron.js";
 cloudinary.config({
   cloud_name:process.env.CLOUDINARY_CLIENT_NAME,
   api_key:process.env.CLOUDINARY_CLIENT_API,
@@ -23,6 +25,7 @@ const app = express();
 
 const port = process.env.PORT || 4000;
 notifyUser();
+notifyWishlistUsers();
 removedUnverifiedAccounts();
 connectDB();
 
@@ -43,7 +46,7 @@ app.use('/api/book',bookRouter);
 app.use('/api/order',orderRouter);
 app.use('/api/borrow',borrowRouter);
 app.use('/api/user',UserRouter);
-
+app.use('/api/wishlist',Wishrouter)
 
 app.use(errorMiddleware);
 app.listen(port, () =>

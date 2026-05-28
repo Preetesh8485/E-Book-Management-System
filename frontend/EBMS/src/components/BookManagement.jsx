@@ -9,7 +9,7 @@ import Header from "../layout/Header";
 import AddBookPopup from "../popup/AddBookPopup";
 import ReadBookPopup from "../popup/ReadBookPopup";
 import RecordBookPopup from "../popup/RecordBookPopup";
-
+import axios from "axios";
 const BookManagement = () => {
   const dispatch = useDispatch();
   const { loading, error, message, books } = useSelector(state => state.book);
@@ -19,7 +19,29 @@ const BookManagement = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 10;
+  const handleNotify = async(bookId)=>{
 
+   try {
+
+      const {data} = await axios.post(
+         "http://localhost:4000/api/wishlist/notify",
+         { bookId },
+         {
+            withCredentials:true
+         }
+      );
+
+      toast.success(data.message);
+
+   } catch (error) {
+
+      toast.error(
+         error.response.data.message
+      );
+
+   }
+
+}
   const [readBook, setReadBook] = useState({});
   const openReadPopup = (id) => {
     const book = books.find(book => book._id === id);
@@ -173,6 +195,18 @@ const BookManagement = () => {
                           <span className={`text-[11px] font-bold uppercase ${book.availability ? "text-green-600" : "text-red-400"}`}>
                             {book.availability ? "In Stock" : "Out of Stock"}
                           </span>
+                          {
+                            !book.availability &&
+                            isAuthenticated &&
+                            (
+                              <button
+                                onClick={() => handleNotify(book._id)}
+                                className="mt-2 px-3 py-1 bg-red-500 text-white rounded text-xs"
+                              >
+                                Notify Me
+                              </button>
+                            )
+                          }
                         </div>
                       </td>
                       {isAuthenticated && user?.role === "Admin" && (
