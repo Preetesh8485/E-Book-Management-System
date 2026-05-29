@@ -7,7 +7,7 @@ import {
   getMyBookRequests,
   approveBookRequest,
   rejectBookRequest,
-} from "../controllers/bookRequestController.js";
+} from "../controllers/bookrequestController.js";
 
 const reqRouter = express.Router();
 
