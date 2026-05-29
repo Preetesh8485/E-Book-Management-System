@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { BookA, NotebookPen, ChevronLeft, ChevronRight, Search, Plus, BookOpen } from "lucide-react";
+import { BookA, NotebookPen, ChevronLeft, ChevronRight, Search, Plus, BookOpen, Trash2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleAddBookPopup, toggleReadBookPopup, toggleRecordBookPopup } from "../store/slices/popupSlice";
 import { toast } from "react-toastify";
-import { fetchAllBooks, resetBookSlice } from "../store/slices/bookSlice";
+import { fetchAllBooks, resetBookSlice, deleteBook } from "../store/slices/bookSlice";
 import { fetchAllBorrowedBooks, resetBorrowSlice } from "../store/slices/borrowSlice";
 import { createBookRequest, resetRequestSlice } from "../store/slices/requestSlice";
 import Header from "../layout/Header";
@@ -257,7 +257,7 @@ const BookManagement = () => {
                           </span>
 
                           {/* Member: Request / Already Borrowed */}
-                          {isAuthenticated && user?.role === "Member" &&  (
+                          {isAuthenticated && user?.role === "Member" && (
                             isAlreadyBorrowed(book._id) ? (
                               <span className="px-3 py-1 text-[10px] bg-gray-100 text-gray-400 rounded-md font-bold">
                                 Already Borrowed
@@ -286,9 +286,12 @@ const BookManagement = () => {
                       </td>
 
                       {/* Admin Actions */}
+                      {/* Admin Actions */}
                       {isAuthenticated && user?.role === "Admin" && (
                         <td className="px-6 py-4">
                           <div className="flex items-center justify-end space-x-3">
+
+                            {/* View */}
                             <button
                               onClick={() => openReadPopup(book._id)}
                               className="p-2 text-gray-400 hover:text-[#00A7E1] hover:bg-[#00A7E1]/5 rounded-lg transition-all"
@@ -296,6 +299,8 @@ const BookManagement = () => {
                             >
                               <BookA size={18} />
                             </button>
+
+                            {/* Record */}
                             <button
                               onClick={() => openRecordBookpopup(book._id)}
                               className="p-2 text-gray-400 hover:text-[#FFA630] hover:bg-[#FFA630]/5 rounded-lg transition-all"
@@ -303,6 +308,20 @@ const BookManagement = () => {
                             >
                               <NotebookPen size={18} />
                             </button>
+
+                            {/* Delete */}
+                            <button
+                              onClick={() => {
+                                if (window.confirm("Are you sure you want to delete this book?")) {
+                                  dispatch(deleteBook(book._id));
+                                }
+                              }}
+                              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                              title="Delete Book"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+
                           </div>
                         </td>
                       )}

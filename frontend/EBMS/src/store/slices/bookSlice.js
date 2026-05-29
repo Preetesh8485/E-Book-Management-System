@@ -26,47 +26,83 @@ const bookSlice = createSlice({
             state.error = action.payload;
             state.message = null;
         },
-    addBookRequest(state) {
-        state.loading = true;
-        state.error = null;
-        state.message = null;
-    },
-    addBookSuccess(state, action) {
-        state.loading = false;
-         state.message = action.payload;
-     },
-    addBookFailed(state, action) {
-        state.loading = false;
-        state.error = action.payload;
-     },
-    resetBookSlice(state){
-        state.error=null;
-        state.message = null;
-        state.loading = false;
+        addBookRequest(state) {
+            state.loading = true;
+            state.error = null;
+            state.message = null;
+        },
+        addBookSuccess(state, action) {
+            state.loading = false;
+            state.message = action.payload;
+        },
+        addBookFailed(state, action) {
+            state.loading = false;
+            state.error = action.payload;
+        },
+        resetBookSlice(state) {
+            state.error = null;
+            state.message = null;
+            state.loading = false;
+        },
+        deleteBookRequest(state) {
+            state.loading = true;
+            state.error = null;
+            state.message = null;
+        },
+        deleteBookSuccess(state, action) {
+            state.loading = false;
+            state.message = action.payload;
+        },
+        deleteBookFailed(state, action) {
+            state.loading = false;
+            state.error = action.payload;
+        },
     }
-}
 });
 
-export const fetchAllBooks =()=>async(dispatch)=>{
+export const fetchAllBooks = () => async (dispatch) => {
     dispatch(bookSlice.actions.fetchBooksReq());
-    await axios.get("http://localhost:4000/api/book/showBook", {withCredentials:true}).then(res=>{
+    await axios.get("http://localhost:4000/api/book/showBook", { withCredentials: true }).then(res => {
         dispatch(bookSlice.actions.fetchBooksSuccess(res.data.books));
-    }).catch(err=>{
+    }).catch(err => {
         dispatch(bookSlice.actions.fetchBooksFail(err.response.data.error));
     })
 }
-export const addBook=(data)=>async(dispatch)=>{
+export const addBook = (data) => async (dispatch) => {
     dispatch(bookSlice.actions.addBookRequest());
-    await axios.post("http://localhost:4000/api/book/admin/addBook",data,{withCredentials:true,
-        Headers:{
-            "Content-Type":"application/json"
+    await axios.post("http://localhost:4000/api/book/admin/addBook", data, {
+        withCredentials: true,
+        Headers: {
+            "Content-Type": "application/json"
         }
-    }).then(res=>{
+    }).then(res => {
         dispatch(bookSlice.actions.addBookSuccess(res.data.message));
         dispatch(toggleAddBookPopup());
-    }).catch(err=>{dispatch(bookSlice.actions.addBookFailed(err.response.data.error));})
+    }).catch(err => { dispatch(bookSlice.actions.addBookFailed(err.response.data.error)); })
 }
-export const resetBookSlice=()=>async(dispatch)=>{
+export const deleteBook = (id) => async (dispatch) => {
+    dispatch(bookSlice.actions.deleteBookRequest());
+
+    await axios.post(
+        `http://localhost:4000/api/book/admin/delete/${id}`,
+        {},
+        {
+            withCredentials: true,
+        }
+    )
+        .then((res) => {
+            dispatch(bookSlice.actions.deleteBookSuccess(res.data.message));
+            dispatch(fetchAllBooks());
+        })
+        .catch((err) => {
+            dispatch(
+                bookSlice.actions.deleteBookFailed(
+                    err.response.data.error
+                )
+            );
+        });
+};
+export const resetBookSlice = () => async (dispatch) => {
     dispatch(bookSlice.actions.resetBookSlice());
 };
-export default  bookSlice.reducer;
+export default bookSlice.reducer;
