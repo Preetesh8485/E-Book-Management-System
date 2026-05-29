@@ -209,7 +209,7 @@ const Catalog = () => {
                           <FaSquareCheck className="ml-auto w-6 h-6 text-green-500 opacity-60" />
                         ) : (
                           <button
-                            onClick={() => openReturnBookPopup(book.book, book?.user.email)}
+                            onClick={() => openReturnBookPopup(book.book._id, book?.user.email)}
                             className="p-2 bg-gray-900 text-white rounded-lg hover:bg-[#00A7E1] transition-all"
                           >
                             <PiKeyReturnBold className="w-5 h-5" />
