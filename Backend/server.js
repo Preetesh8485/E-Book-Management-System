@@ -26,7 +26,7 @@ cloudinary.config({
 });
 const app = express();
 const httpServer = createServer(app);
-const allowedOrigins = ["http://localhost:5173"];
+const allowedOrigins = ["http://localhost:5173", process.env.FRONTEND_URL];
 export const io = new Server(httpServer, {
   cors: {
     origin: allowedOrigins,

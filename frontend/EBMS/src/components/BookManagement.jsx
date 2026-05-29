@@ -49,7 +49,7 @@ const BookManagement = () => {
   const handleNotify = async (bookId) => {
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/wishlist/notify",
+        "https://e-book-management-system-rprf.onrender.com/api/wishlist/notify",
         { bookId },
         { withCredentials: true }
       );

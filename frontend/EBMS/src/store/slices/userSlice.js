@@ -44,7 +44,7 @@ const userSlice = createSlice({
 });
 export const fetchAllUsers = () => async (dispatch) => {
     dispatch(userSlice.actions.fetchAllUserRequest());
-    await axios.get("http://localhost:4000/api/user/all", { withCredentials: true }).then(res => {
+    await axios.get("https://e-book-management-system-rprf.onrender.com/api/user/all", { withCredentials: true }).then(res => {
         dispatch(userSlice.actions.fetchAllUserSuccess(res.data.users))
     }).catch(err => {
         dispatch(userSlice.actions.fetchAllUserFail(err.response.data.message))
@@ -52,7 +52,7 @@ export const fetchAllUsers = () => async (dispatch) => {
 }
 export const addNewAdmin = (data) => async (dispatch) => {
     dispatch(userSlice.actions.addNewAdminRequest());
-    await axios.post("http://localhost:4000/api/user/add/new-admin", data, {
+    await axios.post("https://e-book-management-system-rprf.onrender.com/api/user/add/new-admin", data, {
         withCredentials: true,
         headers: {
             "Content-Type": "multipart/form-data"
@@ -71,7 +71,7 @@ export const deleteUser = (id) => async (dispatch) => {
   dispatch(userSlice.actions.deleteUserRequest());
   try {
     const res = await axios.delete(
-      `http://localhost:4000/api/user/remove/member/${id}`,
+      `https://e-book-management-system-rprf.onrender.com/api/user/remove/member/${id}`,
       { withCredentials: true }
     );
 

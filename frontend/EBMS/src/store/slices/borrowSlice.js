@@ -78,7 +78,7 @@ const borrowSlice = createSlice({
 
 export const fetchUserBorrowedBooks = () => async (dispatch) => {
     dispatch(borrowSlice.actions.fetchUserBorrowedBooksReq());
-    await axios.get("http://localhost:4000/api/borrow/borrowed-books", { withCredentials: true }).then(res => {
+    await axios.get("https://e-book-management-system-rprf.onrender.com/api/borrow/borrowed-books", { withCredentials: true }).then(res => {
         dispatch(borrowSlice.actions.fetchUserBorrowedBooksSuccess(res.data.borrowedBooks));
     }).catch(err => {
         dispatch(borrowSlice.actions.fetchUserBorrowedBooksFail(err.response.data.error));
@@ -86,7 +86,7 @@ export const fetchUserBorrowedBooks = () => async (dispatch) => {
 }
 export const fetchAllBorrowedBooks = () => async (dispatch) => {
     dispatch(borrowSlice.actions.fetchAllBorrowedBooksReq());
-    await axios.get("http://localhost:4000/api/borrow/get-borrowed-book-by-users", { withCredentials: true }).then(res => {
+    await axios.get("https://e-book-management-system-rprf.onrender.com/api/borrow/get-borrowed-book-by-users", { withCredentials: true }).then(res => {
         dispatch(borrowSlice.actions.fetchAllBorrowedBooksSuccess(res.data.borrowedBooks));
     }).catch(err => {
         dispatch(borrowSlice.actions.fetchAllBorrowedBooksFail(err.response.data.error));
@@ -96,7 +96,7 @@ export const fetchAllBorrowedBooks = () => async (dispatch) => {
 
 export const recordBorrowBook = (email,id) => async (dispatch) => {
     dispatch(borrowSlice.actions.recordBookRequest());
-    await axios.post(`http://localhost:4000/api/borrow/record-borrowed-book/${id}`, {email}, {
+    await axios.post(`https://e-book-management-system-rprf.onrender.com/api/borrow/record-borrowed-book/${id}`, {email}, {
         withCredentials: true,
         headers: {
             "Content-Type": "application/json"
@@ -108,7 +108,7 @@ export const recordBorrowBook = (email,id) => async (dispatch) => {
 }
 export const returnBook =({ email, bookId }) =>async(dispatch)=>{
     dispatch(borrowSlice.actions.returnBookRequest());
-    await axios.put(`http://localhost:4000/api/borrow/return-borrowed-book/${bookId}`,{email},{withCredentials:true,
+    await axios.put(`https://e-book-management-system-rprf.onrender.com/api/borrow/return-borrowed-book/${bookId}`,{email},{withCredentials:true,
         headers:{
             "Content-Type":"application/json",
         }
