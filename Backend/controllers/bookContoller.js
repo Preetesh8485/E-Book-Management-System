@@ -74,7 +74,7 @@ export const addBook = catchAsynError(async (req, res, next) => {
         return next(error);
     }
 });
-export const DeleteBook = catchAsynError(async (req, res, next) => {
+export const DeleteBook = catchAsynError(async (req, res, next) => {p
     const {id}=req.params;
     const book=await Book.findById(id);
     if(!book){
