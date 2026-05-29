@@ -1,6 +1,6 @@
 import express from "express";
 
-import {addWishlistNotification}from "../Controllers/wishlistController.js";
+import {addWishlistNotification}from "../controllers/wishlistController.js";
 
 import { isAuthenticated }from "../middlewear/authMiddlewear.js";
 
