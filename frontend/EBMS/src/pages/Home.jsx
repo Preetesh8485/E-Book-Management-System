@@ -10,6 +10,7 @@ import Users from '../components/Users'
 import Catalog from '../components/Catalog'
 import MyBorrowedBooks from '../components/MyBorrowedBooks'
 import BookOrders from '../components/BookOrders';
+import BookRequests from '../components/BookRequests';
 const Home = () => {
   const [isSideBarOpen, setisSideBarOpen] = useState(false);
   const [selectedComponent, setSelectedComponent] = useState(false);
@@ -30,41 +31,43 @@ const Home = () => {
             switch (selectedComponent) {
               case "Dashboard":
                 return user?.role === "Member" ? (
-                  <UserDashboard/>
+                  <UserDashboard />
                 ) : (
-                  <AdminDashboard/>
+                  <AdminDashboard />
                 )
-               
+
               case "Books":
-                return <BookManagement/>;
-                
+                return <BookManagement />;
+              case "Book Requests":
+                if (user.role === "Admin") return <BookRequests />;
+                break;
               case "Catalog":
                 if (user.role === "Admin") {
-                  return <Catalog/>
+                  return <Catalog />
                 }
                 break;
               case "Users":
                 if (user.role === "Admin") {
-                  return <Users/>
+                  return <Users />
                 }
                 break;
               case "My Borrowed Books":
                 if (user.role === "Member") {
-                  return <MyBorrowedBooks/>
+                  return <MyBorrowedBooks />
                 }
                 break;
               case "Order Book":
                 if (user.role === "Admin") {
-                  return <BookOrders/>
+                  return <BookOrders />
                 }
                 break;
               default:
-                 return user?.role === "Member" ? (
-                  <UserDashboard/>
+                return user?.role === "Member" ? (
+                  <UserDashboard />
                 ) : (
-                  <AdminDashboard/>
+                  <AdminDashboard />
                 )
-                
+
             }
           }
         )()

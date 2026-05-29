@@ -55,9 +55,8 @@ const SideBar = ({
   return (
     <>
       <aside
-        className={`${
-          isSideBarOpen ? "left-0" : "-left-full"
-        } z-10 transition-all duration-700 md:relative md:left-0 flex w-64 bg-gradient-to-b from-[#0047AB] to-[#003580] text-amber-50 flex-col h-full shadow-xl`}
+        className={`${isSideBarOpen ? "left-0" : "-left-full"
+          } z-10 transition-all duration-700 md:relative md:left-0 flex w-64 bg-gradient-to-b from-[#0047AB] to-[#003580] text-amber-50 flex-col h-full shadow-xl`}
         style={{ position: "fixed" }}
       >
         <div className="px-6 py-4 my-8">
@@ -83,6 +82,14 @@ const SideBar = ({
 
           {isAuthenticated && user?.role === "Admin" && (
             <>
+              <button
+                className={btnStyle}
+                onClick={() => setSelectedComponent("Book Requests")}
+              >
+                <img src={bookIcon} alt="icon" />
+                <span>Book Requests</span>
+              </button>
+
               <button
                 className={btnStyle}
                 onClick={() => setSelectedComponent("Catalog")}

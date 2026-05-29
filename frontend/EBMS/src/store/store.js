@@ -5,6 +5,7 @@ import popupReducer from "./slices/popupSlice"
 import userReducer from "./slices/userSlice"
 import bookReducer from "./slices/bookSlice"
 import borrowReducer from"./slices/borrowSlice"
+import requestReducer from "./slices/requestSlice"
 export const store = configureStore({
     reducer:{
         auth:authReducer,
@@ -12,6 +13,7 @@ export const store = configureStore({
         popup:popupReducer,
         user:userReducer,
         book:bookReducer,
-        borrow:borrowReducer
+        borrow:borrowReducer,
+        request:requestReducer
     }
 })

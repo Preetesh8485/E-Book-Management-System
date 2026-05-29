@@ -378,3 +378,37 @@ export const returnSuccessTemplate = (name) => {
   </div>
   `;
 };
+export const requestRejectedTemplate = (name, bookTitle) => {
+  return `
+  <div style="font-family: Arial, sans-serif; background-color: #f4f6f8; padding: 20px;">
+    <div style="max-width: 500px; margin: auto; background: #ffffff; padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+      
+      <h2 style="color: #dc2626; text-align: center;">
+        ❌ Book Request Rejected
+      </h2>
+      
+      <p style="font-size: 16px;">Hello <b>${name}</b>,</p>
+      
+      <p style="font-size: 15px;">
+        Your request for the following book has been rejected by the library admin:
+      </p>
+      
+      <div style="margin: 20px 0; padding: 15px; background-color: #fee2e2; border-left: 5px solid #dc2626; border-radius: 5px;">
+        <p style="margin: 0; font-size: 16px;">
+          📖 <b>${bookTitle}</b>
+        </p>
+      </div>
+      
+      <p style="font-size: 14px; color: #444;">
+        You can browse other available books in the library and submit a new request.
+      </p>
+      
+      <p style="margin-top: 20px; font-size: 14px; color: #555;">
+        Regards,<br/>
+        <b>Library Management System</b>
+      </p>
+      
+    </div>
+  </div>
+  `;
+};

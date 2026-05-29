@@ -143,7 +143,7 @@ export const getAllOrders = () => async (dispatch) => {
     } catch (error) {
         dispatch(
             orderSlice.actions.getOrdersFail(
-                error.response?.data?.message || "Something went wrong"
+                error.response?.data?.error || "Something went wrong"
             )
         );
     }
