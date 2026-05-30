@@ -6,10 +6,10 @@ import { toggleReturnBookPopup } from "../store/slices/popupSlice";
 const ReturnBookPopup = ({ bookId, email }) => {
   const dispatch = useDispatch();
 
-  const handleReturnBook = (e) => {
+  const handleReturnBook = async (e) => {
     e.preventDefault();
-    dispatch(returnBook({ email, bookId }));
-    dispatch(toggleReturnBookPopup());
+    const success = await dispatch(returnBook({ email, bookId }));
+    if (success) dispatch(toggleReturnBookPopup()); 
   };
 
   return <>

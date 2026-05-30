@@ -14,21 +14,7 @@ const RecordBookPopup = ({ bookId }) => {
     e.preventDefault();
     dispatch(recordBorrowBook(email, bookId));
   };
-const { error, message } = useSelector(state => state.borrow);
 
-useEffect(() => {
-  if (message) {
-    toast.success(message);
-    dispatch(fetchAllBooks());
-    dispatch(fetchAllUsers());
-    dispatch(resetBorrowSlice()); // close popup on success
-  }
-
-  if (error) {
-    toast.error(error);
-    dispatch(resetBorrowSlice());
-  }
-}, [message, error]);
 
 
   return (<>
@@ -42,18 +28,18 @@ useEffect(() => {
               <label className="block text-gray-900 font-medium">
                 User Email
               </label>
-              <input type="email" required value={email} onChange={(e)=>{setEmail(e.target.value)}} placeholder="Borrower's email" className="w-full px-4 py-2 border-2 border-black rounded-md"/>
+              <input type="email" required value={email} onChange={(e) => { setEmail(e.target.value) }} placeholder="Borrower's email" className="w-full px-4 py-2 border-2 border-black rounded-md" />
             </div>
             <div className="flex justify-end space-x-4">
-              <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300" type="button" onClick={()=>{dispatch(toggleRecordBookPopup())}}>
+              <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300" type="button" onClick={() => { dispatch(toggleRecordBookPopup()) }}>
                 Close
               </button>
               <button
-  type="submit"
-  className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
->
-  Record
-</button>
+                type="submit"
+                className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
+              >
+                Record
+              </button>
             </div>
           </form>
         </div>

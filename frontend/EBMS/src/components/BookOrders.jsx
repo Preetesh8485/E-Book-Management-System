@@ -1,19 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteOrder, getAllOrders, markOrderDelivered } from "../store/slices/OrderSlice";
+import { deleteOrder, getAllOrders, markOrderDelivered, resetOrderSlice } from "../store/slices/OrderSlice";
 import Header from "../layout/Header";
 import { toggleOrderBookPopup } from "../store/slices/popupSlice"
 import AddNewOrderPopup from "../popup/AddNewOrderPopup";
 import { Search, ShoppingBag, Truck, CheckCircle2, Calendar, Trash2 } from "lucide-react";
-
+import { toast } from "react-toastify";
 const BookOrders = () => {
+  
+  
   const dispatch = useDispatch();
   const [search, setSearch] = useState("");
-  const { orders, loading } = useSelector(state => state.order);
+  const { orders, loading, message, error } = useSelector(state => state.order);
   const usersPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
   const { OrderBookPopup } = useSelector(state => state.popup);
-
+  
+  useEffect(() => {
+    if (message) {
+      toast.success(message);
+      dispatch(resetOrderSlice());
+    }
+    if (error) {
+      toast.error(error);
+      dispatch(resetOrderSlice());
+    }
+  }, [message, error, dispatch]);
   useEffect(() => {
     dispatch(getAllOrders());
   }, [dispatch]);

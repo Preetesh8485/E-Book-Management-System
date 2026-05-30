@@ -68,21 +68,18 @@ export const addNewAdmin = (data) => async (dispatch) => {
 
 }
 export const deleteUser = (id) => async (dispatch) => {
-  dispatch(userSlice.actions.deleteUserRequest());
-  try {
-    const res = await axios.delete(
-      `https://e-book-management-system-rprf.onrender.com/api/user/remove/member/${id}`,
-      { withCredentials: true }
-    );
+    dispatch(userSlice.actions.deleteUserRequest());
+    try {
+        const res = await axios.delete(
+            `https://e-book-management-system-rprf.onrender.com/api/user/remove/member/${id}`,
+            { withCredentials: true }
+        );
 
-    dispatch(userSlice.actions.deleteUserSuccess(res.data.message));
-    toast.success(res.data.message)
-  } catch (err) {
-    dispatch(
-      userSlice.actions.deleteUserFailed(
-        toast.error(err.response.data.error)
-      )
-    );
-  }
+        dispatch(userSlice.actions.deleteUserSuccess(res.data.message));
+        toast.success(res.data.message)
+    } catch (err) {
+        toast.error(err.response.data.error);
+        dispatch(userSlice.actions.deleteUserFailed(err.response.data.error));
+    }
 };
 export default userSlice.reducer;

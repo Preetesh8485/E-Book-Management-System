@@ -58,7 +58,10 @@ const BookManagement = () => {
       toast.error(error.response?.data?.message || "Failed to subscribe");
     }
   };
-
+  useEffect(() => {
+    dispatch(fetchAllBooks());
+    dispatch(fetchAllBorrowedBooks());
+  }, [dispatch]);
   // Book / borrow slice toasts
   useEffect(() => {
 
@@ -123,12 +126,6 @@ const BookManagement = () => {
       dispatch(resetRequestSlice());
     }
   }, [dispatch, requestMessage, requestError]);
-
-  // Initial fetches
-  useEffect(() => {
-    dispatch(fetchAllBooks());
-  }, [dispatch]);
-
   const [searchedKeyword, setSearchedKeyword] = useState("");
   const handleSearch = (e) => {
     setSearchedKeyword(e.target.value.toLowerCase());
@@ -149,12 +146,12 @@ const BookManagement = () => {
 
   // Check if member already has this book borrowed
   const isAlreadyBorrowed = (bookId) => {
-  return allBorrowedBooks?.some(
-    (b) =>
-      b.book?._id?.toString() === bookId?.toString() &&
-      !b.returnDate
-  );
-};
+    return allBorrowedBooks?.some(
+      (b) =>
+        b.book?._id?.toString() === bookId?.toString() &&
+        !b.returnDate
+    );
+  };
 
   return (
     <>
