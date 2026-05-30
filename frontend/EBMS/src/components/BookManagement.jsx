@@ -23,7 +23,7 @@ const BookManagement = () => {
     loading: borrowSliceLoading,
     error: borrowSliceError,
     message: borrowSliceMessage,
-    borrowedBooks,
+    allBorrowedBooks,
   } = useSelector(state => state.borrow);
   const {
     message: requestMessage,
@@ -61,28 +61,50 @@ const BookManagement = () => {
 
   // Book / borrow slice toasts
   useEffect(() => {
+
     if (message || borrowSliceMessage) {
+
       toast.success(message || borrowSliceMessage);
+
       dispatch(fetchAllBooks());
       dispatch(fetchAllBorrowedBooks());
-      dispatch(resetBookSlice());
-      dispatch(resetBorrowSlice());
+
+      setTimeout(() => {
+
+        dispatch(resetBookSlice());
+        dispatch(resetBorrowSlice());
+
+      }, 500);
     }
+
     if (error || borrowSliceError) {
+
       toast.error(error || borrowSliceError);
-      dispatch(resetBookSlice());
-      dispatch(resetBorrowSlice());
+
+      setTimeout(() => {
+
+        dispatch(resetBookSlice());
+        dispatch(resetBorrowSlice());
+
+      }, 500);
     }
-  }, [dispatch, message, error, borrowSliceError, borrowSliceLoading, borrowSliceMessage]);
+
+  }, [
+    dispatch,
+    message,
+    error,
+    borrowSliceError,
+    borrowSliceMessage
+  ]);
   useEffect(() => {
-    socket.on("requestApproved", (data) => {
-      toast.success(`✅ ${data.message}`);
+    socket.on("requestApproved", () => {
       dispatch(fetchAllBooks());
       dispatch(fetchAllBorrowedBooks());
     });
 
-    socket.on("requestRejected", (data) => {
-      toast.error(`❌ ${data.message}`);
+    socket.on("requestRejected", () => {
+      dispatch(fetchAllBooks());
+      dispatch(fetchAllBorrowedBooks());
     });
 
     return () => {
@@ -127,10 +149,12 @@ const BookManagement = () => {
 
   // Check if member already has this book borrowed
   const isAlreadyBorrowed = (bookId) => {
-    return borrowedBooks?.some(
-      (b) => b.bookId?.toString() === bookId?.toString() && b.returned === false
-    );
-  };
+  return allBorrowedBooks?.some(
+    (b) =>
+      b.book?._id?.toString() === bookId?.toString() &&
+      !b.returnDate
+  );
+};
 
   return (
     <>
