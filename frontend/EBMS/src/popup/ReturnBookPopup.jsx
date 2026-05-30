@@ -1,17 +1,31 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { returnBook } from "../store/slices/borrowSlice";
+import { fetchAllBorrowedBooks, resetBorrowSlice, returnBook } from "../store/slices/borrowSlice";
 import { toggleReturnBookPopup } from "../store/slices/popupSlice";
+import { toast } from "react-toastify";
+import { fetchAllBooks } from "../store/slices/bookSlice";
 
 const ReturnBookPopup = ({ bookId, email }) => {
   const dispatch = useDispatch();
-
+  const { message, error } = useSelector(state => state.borrow);
   const handleReturnBook = async (e) => {
     e.preventDefault();
     const success = await dispatch(returnBook({ email, bookId }));
-    if (success) dispatch(toggleReturnBookPopup()); 
+    if (success) dispatch(toggleReturnBookPopup());
   };
-
+  useEffect(() => {
+    if (message) {
+      toast.success(message);
+      dispatch(fetchAllBooks());
+      dispatch(fetchAllBorrowedBooks());
+      dispatch(resetBorrowSlice());
+      dispatch(toggleReturnBookPopup());
+    }
+    if (error) {
+      toast.error(error);
+      dispatch(resetBorrowSlice());
+    }
+  }, [message, error, dispatch]);
   return <>
     <div className="fixed inset-0 bg-black/50 p-5 flex items-center justify-center z-50">
       <div className="w-full bg-white rounded-lg shadow-lg md:w-1/3">

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { recordBorrowBook, resetBorrowSlice } from "../store/slices/borrowSlice";
+import { fetchAllBorrowedBooks, recordBorrowBook, resetBorrowSlice } from "../store/slices/borrowSlice";
 import { toggleRecordBookPopup } from "../store/slices/popupSlice";
 import { toast } from "react-toastify";
 import { fetchAllBooks } from "../store/slices/bookSlice";
@@ -9,12 +9,25 @@ import { fetchAllUsers } from "../store/slices/userSlice";
 const RecordBookPopup = ({ bookId }) => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
+  const { error, message } = useSelector(state => state.borrow);
 
   const handleRecordBook = (e) => {
     e.preventDefault();
     dispatch(recordBorrowBook(email, bookId));
   };
-
+  useEffect(() => {
+    if (message) {
+      toast.success(message);
+      dispatch(fetchAllBooks());
+      dispatch(fetchAllBorrowedBooks()); // ADD THIS TOO
+      dispatch(resetBorrowSlice());
+      dispatch(toggleRecordBookPopup());
+    }
+    if (error) {
+      toast.error(error);
+      dispatch(resetBorrowSlice());
+    }
+  }, [message, error, dispatch]);
 
 
   return (<>

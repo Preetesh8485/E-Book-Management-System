@@ -12,7 +12,7 @@ import { BookOpen, Check, X } from "lucide-react";
 import { socket } from "../socket.js"
 const BookRequests = () => {
     const dispatch = useDispatch();
-    const { user } = useSelector((state) => state.user);
+    const { user } = useSelector((state) => state.auth);
     const { requests, error, message, loading } = useSelector((state) => state.request);
     useEffect(() => {
 
