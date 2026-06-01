@@ -51,7 +51,7 @@ export const addToWishlist = (id) => async (dispatch) => {
         dispatch(wishlistSlice.actions.addWishlistReq());
 
         const res = await axios.post(
-            `http://localhost:4000/api/v1/wishlist/notify`,
+            `https://e-book-management-system-rprf.onrender.com/api/v1/wishlist/notify`,
             { bookId: id },
             {
                 withCredentials: true,

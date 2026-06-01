@@ -92,7 +92,7 @@ export const createOrder = (data) => async (dispatch) => {
         dispatch(orderSlice.actions.createOrderReq());
 
         const res = await axios.post(
-            "http://localhost:4000/api/order/create",
+            "https://e-book-management-system-rprf.onrender.com/api/order/create",
             data,
             {
                 withCredentials: true,
@@ -118,7 +118,7 @@ export const markOrderDelivered = (id) => async (dispatch) => {
         dispatch(orderSlice.actions.deliverOrderReq());
 
         const res = await axios.put(
-            `http://localhost:4000/api/order/deliver/${id}`,
+            `https://e-book-management-system-rprf.onrender.com/api/order/deliver/${id}`,
             {},
             { withCredentials: true }
         );
@@ -138,7 +138,7 @@ export const getAllOrders = () => async (dispatch) => {
         dispatch(orderSlice.actions.getOrdersReq());
 
         const res = await axios.get(
-            "http://localhost:4000/api/order/all",
+            "https://e-book-management-system-rprf.onrender.com/api/order/all",
             { withCredentials: true }
         );
 
@@ -157,7 +157,7 @@ export const deleteOrder = (id) => async (dispatch) => {
 
         dispatch(orderSlice.actions.deleteOrderReq());
         const res = await axios.delete(
-            `http://localhost:4000/api/order/delete-order/${id}`,
+            `https://e-book-management-system-rprf.onrender.com/api/order/delete-order/${id}`,
             {
                 withCredentials: true,
             }

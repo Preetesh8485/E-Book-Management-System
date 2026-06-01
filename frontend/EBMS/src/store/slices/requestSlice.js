@@ -78,7 +78,7 @@ export const requestBook = (id) => async (dispatch) => {
     dispatch(requestSlice.actions.requestBookReq());
 
     await axios.post(
-        `http://localhost:4000/api/request/request-book/${id}`,
+        `https://e-book-management-system-rprf.onrender.com/api/request/request-book/${id}`,
         {},
         {
             withCredentials: true,
@@ -97,7 +97,7 @@ export const fetchAllRequests = () => async (dispatch) => {
     dispatch(requestSlice.actions.fetchAllRequestsReq());
 
     await axios.get(
-        "http://localhost:4000/api/request/all-requests",
+        "https://e-book-management-system-rprf.onrender.com/api/request/all-requests",
         {
             withCredentials: true,
         }
@@ -112,7 +112,7 @@ export const approveRequest = (requestId) => async (dispatch) => {
     dispatch(requestSlice.actions.approveRequestReq());
 
     await axios.put(
-        `http://localhost:4000/api/request/approve-request/${requestId}`,
+        `https://e-book-management-system-rprf.onrender.com/api/request/approve-request/${requestId}`,
         {},
         {
             withCredentials: true,
@@ -131,7 +131,7 @@ export const rejectRequest = (requestId) => async (dispatch) => {
     dispatch(requestSlice.actions.rejectRequestReq());
 
     await axios.put(
-        `http://localhost:4000/api/request/reject-request/${requestId}`,
+        `https://e-book-management-system-rprf.onrender.com/api/request/reject-request/${requestId}`,
         {},
         {
             withCredentials: true,
