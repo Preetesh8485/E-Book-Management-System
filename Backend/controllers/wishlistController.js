@@ -9,7 +9,8 @@ export const addWishlistNotification = catchAsynError(async (req,res,next)=>{
       const alreadyExists =
       await WishlistNotification.findOne({
         user:req.user._id,
-        book:bookId
+        book:bookId,
+        notified:false
       })
 
       if(alreadyExists){

@@ -62,7 +62,7 @@ const bookSlice = createSlice({
 
 export const fetchAllBooks = () => async (dispatch) => {
     dispatch(bookSlice.actions.fetchBooksReq());
-    await axios.get("https://e-book-management-system-rprf.onrender.com/api/book/showBook", { withCredentials: true }).then(res => {
+    await axios.get("http://localhost:4000/api/book/showBook", { withCredentials: true }).then(res => {
         dispatch(bookSlice.actions.fetchBooksSuccess(res.data.books));
     }).catch(err => {
         dispatch(bookSlice.actions.fetchBooksFail(err.response.data.error));
@@ -70,7 +70,7 @@ export const fetchAllBooks = () => async (dispatch) => {
 }
 export const addBook = (data) => async (dispatch) => {
     dispatch(bookSlice.actions.addBookRequest());
-    await axios.post("https://e-book-management-system-rprf.onrender.com/api/book/admin/addBook", data, {
+    await axios.post("http://localhost:4000/api/book/admin/addBook", data, {
         withCredentials: true,
         Headers: {
             "Content-Type": "application/json"
@@ -82,17 +82,10 @@ export const addBook = (data) => async (dispatch) => {
 }
 export const deleteBook = (id) => async (dispatch) => {
     dispatch(bookSlice.actions.deleteBookRequest());
-
-    await axios.post(
-        `https://e-book-management-system-rprf.onrender.com/api/book/admin/delete/${id}`,
-        {},
-        {
-            withCredentials: true,
-        }
+    await axios.delete(`http://localhost:4000/api/book/admin/delete/${id}`, { withCredentials: true, }
     )
         .then((res) => {
             dispatch(bookSlice.actions.deleteBookSuccess(res.data.message));
-            dispatch(fetchAllBooks());
         })
         .catch((err) => {
             dispatch(

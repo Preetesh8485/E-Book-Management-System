@@ -10,7 +10,7 @@ import Users from '../components/Users'
 import Catalog from '../components/Catalog'
 import MyBorrowedBooks from '../components/MyBorrowedBooks'
 import BookOrders from '../components/BookOrders';
-import BookRequests from '../components/BookRequests';
+import Requests from '../components/Requests';
 const Home = () => {
   const [isSideBarOpen, setisSideBarOpen] = useState(false);
   const [selectedComponent, setSelectedComponent] = useState(false);
@@ -38,9 +38,7 @@ const Home = () => {
 
               case "Books":
                 return <BookManagement />;
-              case "Book Requests":
-                if (user.role === "Admin") return <BookRequests />;
-                break;
+
               case "Catalog":
                 if (user.role === "Admin") {
                   return <Catalog />
@@ -59,6 +57,11 @@ const Home = () => {
               case "Order Book":
                 if (user.role === "Admin") {
                   return <BookOrders />
+                }
+                break;
+              case "Requests":
+                if (user.role === "Admin") {
+                  return <Requests />
                 }
                 break;
               default:

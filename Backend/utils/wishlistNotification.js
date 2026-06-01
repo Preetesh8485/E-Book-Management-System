@@ -10,10 +10,9 @@ from "./sendEmail.js";
 
 export const notifyWishlistUsers = ()=>{
 
-cron.schedule("*/10 * * * *", async()=>{
+cron.schedule("* * * * *", async()=>{
 
    try {
-
       const users =
       await WishlistNotification.find({
          notified:false

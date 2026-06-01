@@ -13,7 +13,7 @@ import ReturnBookPopup from "../popup/ReturnBookPopup";
 const Catalog = () => {
   const dispatch = useDispatch();
   const { returnPopup } = useSelector((state) => state.popup);
-  const { error, allBorrowedBooks, message } = useSelector((state) => state.borrow);
+  const { loading, error, allBorrowedBooks, message } = useSelector((state) => state.borrow);
 
   const [filter, setFilter] = useState("borrowed");
   const [searchTerm, setSearchTerm] = useState("");
@@ -140,17 +140,25 @@ const Catalog = () => {
           </div>
         </header>
 
-        {currentItems.length > 0 ? (
+        {loading ? (
+
+          <div className="mt-20 flex flex-col items-center justify-center">
+            <div className="w-10 h-10 border-4 border-gray-200 border-t-black rounded-full animate-spin"></div>
+
+            <p className="mt-4 text-sm font-semibold text-gray-500">
+              Loading records...
+            </p>
+          </div>
+
+        ) : currentItems.length > 0 ? (
           <div className="mt-8 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div style={{ overflow: "auto" }}>
+            <div className="overflow-x-auto">
               <table className="min-w-full">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100">
                     <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">#</th>
                     <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Student Information</th>
-                    <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                      Borrowed Book
-                    </th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Book</th>
                     <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Schedule</th>
                     <th className="px-6 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Fine</th>
                     <th className="px-6 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
@@ -172,13 +180,11 @@ const Catalog = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="flex flex-col">
-                            <span className="text-sm font-bold text-gray-800">
-                              {book?.book?.title}
-                            </span>
-                          </div>
+                        <div className="flex flex-col">
+                          <span className={`text-sm font-bold ${!book.returnDate ? 'text-gray-900' : 'text-gray-500'} `}>
 
+                            {book?.book?.title}
+                          </span>
                         </div>
                       </td>
                       <td className="px-6 py-4">

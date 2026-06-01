@@ -176,7 +176,7 @@ SENDER_EMAIL=your_sender_email
 JWT_EXPIRE=3d
 COOKIE_EXPIRE=3
 
-FRONTEND_URL=http://localhost:5173
+FRONTEND_URL=https://e-book-management-system-ten.vercel.app
 
 CLOUDINARY_CLIENT_NAME=your_cloud_name
 CLOUDINARY_CLIENT_API=your_api_key

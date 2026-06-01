@@ -62,7 +62,7 @@ await sendEmail({
     message:"Book borrowed successfully"
  })
 })
-   
+
 export const returnBorrowedBook = catchAsynError(async(req,res,next)=>{
    const {bookId}=req.params;
    const{email}=req.body;
@@ -128,19 +128,10 @@ export const borrowedBooks = catchAsynError(async(req,res,next)=>{
  })
 })
 
-export const getBorrowedBooksForAdmin =
-catchAsynError(async(req,res,next)=>{
-
-const borrowedBooks =
-await Borrow.find()
-.populate({
-   path:"book",
-   model:"book"
-});
-
-res.status(200).json({
+export const getBorrowedBooksForAdmin = catchAsynError(async(req,res,next)=>{
+const borrowedBooks=await Borrow.find().populate("book");
+ res.status(200).json({
    success:true,
    borrowedBooks
-})
-
+ })
 })

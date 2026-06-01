@@ -28,7 +28,7 @@ const borrowedSchema= mongoose.Schema({
     },
     book:{
          type:mongoose.Schema.Types.ObjectId,
-            ref:"Book",
+            ref:"book",
             required:true
     },
     borrowDate:{

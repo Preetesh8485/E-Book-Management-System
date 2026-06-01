@@ -18,7 +18,12 @@ OrderRouter.put(
     markOrderDelivered
 );
 OrderRouter.get("/all",isAuthenticated,
-    isAuthorized("Admin"),getAllOrders
+    isAuthorized("Admin"),getAllOrders)
+
+OrderRouter.delete(
+    "/delete-order/:id",
+    isAuthenticated,
+    isAuthorized("Admin"),
+    deleteOrder
 );
-OrderRouter.delete("/delete/:id", isAuthenticated, isAuthorized("Admin"), deleteOrder);
 export default OrderRouter;

@@ -10,6 +10,7 @@ const orderSlice = createSlice({
         order: null,
         orders: [],
     },
+
     reducers: {
         createOrderReq(state) {
             state.loading = true;
@@ -70,7 +71,10 @@ const orderSlice = createSlice({
         deleteOrderSuccess(state, action) {
             state.loading = false;
             state.message = action.payload.message;
-            state.orders = state.orders.filter(order => order._id !== action.payload.id);
+
+            state.orders = state.orders.filter(
+                order => order._id !== action.payload.id
+            );
         },
         deleteOrderFail(state, action) {
             state.loading = false;
@@ -88,7 +92,7 @@ export const createOrder = (data) => async (dispatch) => {
         dispatch(orderSlice.actions.createOrderReq());
 
         const res = await axios.post(
-            "https://e-book-management-system-rprf.onrender.com/api/order/create",
+            "http://localhost:4000/api/order/create",
             data,
             {
                 withCredentials: true,
@@ -114,7 +118,7 @@ export const markOrderDelivered = (id) => async (dispatch) => {
         dispatch(orderSlice.actions.deliverOrderReq());
 
         const res = await axios.put(
-            `https://e-book-management-system-rprf.onrender.com/api/order/deliver/${id}`,
+            `http://localhost:4000/api/order/deliver/${id}`,
             {},
             { withCredentials: true }
         );
@@ -134,7 +138,7 @@ export const getAllOrders = () => async (dispatch) => {
         dispatch(orderSlice.actions.getOrdersReq());
 
         const res = await axios.get(
-            "https://e-book-management-system-rprf.onrender.com/api/order/all",
+            "http://localhost:4000/api/order/all",
             { withCredentials: true }
         );
 
@@ -143,27 +147,31 @@ export const getAllOrders = () => async (dispatch) => {
     } catch (error) {
         dispatch(
             orderSlice.actions.getOrdersFail(
-                error.response?.data?.error || "Something went wrong"
+                error.response?.data?.message || "Something went wrong"
             )
         );
     }
 };
-// DELETE ORDER THUNK
 export const deleteOrder = (id) => async (dispatch) => {
     try {
+
         dispatch(orderSlice.actions.deleteOrderReq());
-
         const res = await axios.delete(
-            `https://e-book-management-system-rprf.onrender.com/api/order/delete/${id}`,
-            { withCredentials: true }
+            `http://localhost:4000/api/order/delete-order/${id}`,
+            {
+                withCredentials: true,
+            }
         );
-
-        // We pass the id along with the response data so the reducer knows which one to remove
-        dispatch(orderSlice.actions.deleteOrderSuccess({ ...res.data, id }));
+        dispatch(
+            orderSlice.actions.deleteOrderSuccess({
+                message: res.data.message,
+                id,
+            })
+        );
     } catch (error) {
         dispatch(
             orderSlice.actions.deleteOrderFail(
-                error.response?.data?.message || "Failed to delete order"
+                error.response?.data?.message || "Something went wrong"
             )
         );
     }

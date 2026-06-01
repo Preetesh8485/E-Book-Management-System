@@ -15,7 +15,7 @@ import {
   toggleAddNewAdminPopup,
   toggleSettingPopup,
 } from "../store/slices/popupSlice.js";
-
+import { HelpingHand }from "lucide-react";
 import SettingPopup from "../popup/SettingPopup.jsx";
 import AddNewAdmin from "../popup/AddNewAdmin";
 
@@ -84,14 +84,6 @@ const SideBar = ({
             <>
               <button
                 className={btnStyle}
-                onClick={() => setSelectedComponent("Book Requests")}
-              >
-                <img src={bookIcon} alt="icon" />
-                <span>Book Requests</span>
-              </button>
-
-              <button
-                className={btnStyle}
                 onClick={() => setSelectedComponent("Catalog")}
               >
                 <img src={catalogIcon} alt="icon" />
@@ -112,6 +104,12 @@ const SideBar = ({
               >
                 <img src={bookIcon} alt="icon" />
                 <span>Order Book</span>
+              </button>
+              <button
+                className={btnStyle}
+                onClick={() => setSelectedComponent("Requests")}>
+                <HelpingHand className="w-6 h-6" />
+                <span>Requests</span>
               </button>
 
               <button

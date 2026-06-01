@@ -1,31 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteOrder, getAllOrders, markOrderDelivered, resetOrderSlice } from "../store/slices/OrderSlice";
+import { getAllOrders, markOrderDelivered, deleteOrder } from "../store/slices/OrderSlice";
 import Header from "../layout/Header";
 import { toggleOrderBookPopup } from "../store/slices/popupSlice"
 import AddNewOrderPopup from "../popup/AddNewOrderPopup";
-import { Search, ShoppingBag, Truck, CheckCircle2, Calendar, Trash2 } from "lucide-react";
-import { toast } from "react-toastify";
+import { Search, ShoppingBag, Truck, CheckCircle2, Calendar } from "lucide-react";
+
 const BookOrders = () => {
-  
-  
   const dispatch = useDispatch();
   const [search, setSearch] = useState("");
-  const { orders, loading, message, error } = useSelector(state => state.order);
+  const { orders, loading } = useSelector(state => state.order);
   const usersPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
   const { OrderBookPopup } = useSelector(state => state.popup);
-  
-  useEffect(() => {
-    if (message) {
-      toast.success(message);
-      dispatch(resetOrderSlice());
-    }
-    if (error) {
-      toast.error(error);
-      dispatch(resetOrderSlice());
-    }
-  }, [message, error, dispatch]);
+
   useEffect(() => {
     dispatch(getAllOrders());
   }, [dispatch]);
@@ -103,7 +91,7 @@ const BookOrders = () => {
         </div>
       ) : filteredOrders.length > 0 ? (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div style={{ overflow: "auto" }}>
+          <div className="overflow-x-auto">
             <table className="min-w-full">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
@@ -114,6 +102,7 @@ const BookOrders = () => {
                   <th className="px-6 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
                   <th className="px-6 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">Timeline</th>
                   <th className="px-6 py-4 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Control</th>
+                  <th className="px-6 py-4 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Remove</th>
                 </tr>
               </thead>
 
@@ -142,8 +131,8 @@ const BookOrders = () => {
                     </td>
                     <td className="px-6 py-4 text-center">
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${order.OrderDelivery === "Delivered"
-                          ? "bg-green-100 text-green-600"
-                          : "bg-yellow-100 text-yellow-600 animate-pulse"
+                        ? "bg-green-100 text-green-600"
+                        : "bg-yellow-100 text-yellow-600 animate-pulse"
                         }`}>
                         {order.OrderDelivery === "Delivered" ? <CheckCircle2 size={12} /> : <Truck size={12} />}
                         {order.OrderDelivery}
@@ -166,18 +155,24 @@ const BookOrders = () => {
                       ) : (
                         <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Complete</span>
                       )}
+                    </td>
+                    <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => {
-                          if (window.confirm("Are you sure you want to delete this order record?")) {
+                          if (
+                            window.confirm(
+                              "Are you sure you want to delete this order?"
+                            )
+                          ) {
                             dispatch(deleteOrder(order._id));
                           }
                         }}
-                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all active:scale-90"
-                        title="Delete Order"
+                        className="px-4 py-1.5 bg-red-500 text-white text-[11px] font-black uppercase rounded-lg hover:bg-red-600 transition-all shadow-sm active:scale-95"
                       >
-                        <Trash2 size={16} />
+                        Delete
                       </button>
                     </td>
+
                   </tr>
                 ))}
               </tbody>

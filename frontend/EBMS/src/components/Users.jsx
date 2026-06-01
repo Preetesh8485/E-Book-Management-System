@@ -24,8 +24,12 @@ const Users = () => {
   };
   const handleDeleteUser = async (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
-    await dispatch(deleteUser(id));
-    dispatch(fetchAllUsers()); 
+
+    const res = dispatch(deleteUser(id));
+
+    if (!res.error) {
+      dispatch(fetchAllUsers());
+    }
   };
   // 🔥 Filter logic
   const filteredUsers = users
@@ -47,7 +51,7 @@ const Users = () => {
     indexOfFirstUser,
     indexOfLastUser
   );
-
+ 
   return (
     <>
       <main className="relative flex-1 p-6 pt-28 ">
@@ -114,7 +118,7 @@ const Users = () => {
                         <button
                           onClick={() => handleDeleteUser(user._id)}
                           className="px-3 py-1 text-sm text-white rounded bg-red-600 hover:bg-red-700"
-
+                            
                         >
                           Revoke Access
                         </button>

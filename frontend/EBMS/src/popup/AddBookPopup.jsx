@@ -14,7 +14,7 @@ const AddBookPopup = () => {
     const timeout = setTimeout(() => setShow(true), 10);
     return () => clearTimeout(timeout);
   }, []);
-
+  const [image, setImage] = useState("");
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [ISBN, setISBN] = useState("");
@@ -22,8 +22,6 @@ const AddBookPopup = () => {
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(null);
 
   const handleClose = () => {
     setShow(false);
@@ -45,7 +43,6 @@ const AddBookPopup = () => {
     formData.append("quantity", quantity);
     formData.append("description", description);
     formData.append("image", image);
-
     dispatch(addBook(formData));
     dispatch(fetchAllBooks());
     handleClose();
@@ -66,31 +63,31 @@ const AddBookPopup = () => {
 
             <form onSubmit={handleAddBook}>
               <div className="mb-4">
-                <div className="flex flex-col items-center mb-4">
+                <label className="block text-gray-900 font-medium mb-2">
+                  Book Image
+                </label>
 
-                  {/* Image Preview */}
-                  <div className="w-24 h-32 rounded-md overflow-hidden border-2 border-gray-300 mb-2">
-                    <img
-                      src={preview || "https://via.placeholder.com/100"}
-                      alt="preview"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                <div className="relative w-full">
 
-                  {/* Upload Button */}
-                  <label className="cursor-pointer text-sm font-medium text-[#00A7E1]">
-                    Upload Front Page
-                    <input
-                      type="file"
-                      accept="image/*"
-                      required
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        setImage(file);
-                        setPreview(URL.createObjectURL(file));
-                      }}
-                      className="hidden"
-                    />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    id="bookImage"
+                    onChange={(e) =>
+                      setImage(e.target.files[0])
+                    }
+                    className="hidden"
+                  />
+
+                  <label
+                    htmlFor="bookImage"
+                    className="flex items-center justify-center w-full px-4 py-6 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-black hover:bg-gray-50 transition-all text-sm font-medium text-gray-500"
+                  >
+                    {
+                      image
+                        ? image.name
+                        : "Click to upload book cover"
+                    }
                   </label>
 
                 </div>

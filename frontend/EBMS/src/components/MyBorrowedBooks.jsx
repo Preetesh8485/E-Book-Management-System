@@ -3,13 +3,9 @@ import { BookA, Search, Calendar, Clock, ChevronRight, ReceiptIndianRupee } from
 import { useDispatch, useSelector } from "react-redux";
 import { toggleReadBookPopup } from "../store/slices/popupSlice";
 import Header from "../layout/Header";
-import { socket } from "../socket";
-import { fetchUserBorrowedBooks } from "../store/slices/borrowSlice";
 import ReadBookPopup from "../popup/ReadBookPopup";
-import { useEffect } from "react";
 
 const MyBorrowedBooks = () => {
-  
   const dispatch = useDispatch();
   const { books } = useSelector((state) => state.book);
   const { userBorrowedBooks } = useSelector((state) => state.borrow);
@@ -29,22 +25,7 @@ const MyBorrowedBooks = () => {
     }
     return 0;
   };
-useEffect(() => {
 
-    socket.on("requestApproved", () => {
-        dispatch(fetchUserBorrowedBooks());
-    });
-
-    socket.on("requestRejected", () => {
-        dispatch(fetchUserBorrowedBooks());
-    });
-
-    return () => {
-        socket.off("requestApproved");
-        socket.off("requestRejected");
-    };
-
-}, [dispatch]);
   const openReadPopup = (id) => {
     const book = books.find((book) => book._id === id);
     setReadBook(book);

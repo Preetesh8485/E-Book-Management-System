@@ -143,7 +143,7 @@ export const resetAuthSlice=()=>(dispatch)=>{
 export const register=(data)=>async(dispatch)=>{
     dispatch(authSlice.actions.registerReq());
     await axios
-    .post("https://e-book-management-system-rprf.onrender.com/api/auth/register",data,{
+    .post("http://localhost:4000/api/auth/register",data,{
         withCredentials:true,
         headers:{
             "Content-Type":"application/json",
@@ -159,7 +159,7 @@ export const register=(data)=>async(dispatch)=>{
 export const otpVerification=(email,otp)=>async(dispatch)=>{
     dispatch(authSlice.actions.OtpVerificationReq());
     await axios
-    .post("https://e-book-management-system-rprf.onrender.com/api/auth/verify-otp",{email,otp},{
+    .post("http://localhost:4000/api/auth/verify-otp",{email,otp},{
         withCredentials:true,
         headers:{
             "Content-Type":"application/json",
@@ -175,7 +175,7 @@ export const otpVerification=(email,otp)=>async(dispatch)=>{
 export const login=(data)=>async(dispatch)=>{
     dispatch(authSlice.actions.LoginReq());
     await axios
-    .post("https://e-book-management-system-rprf.onrender.com/api/auth/login",data,{
+    .post("http://localhost:4000/api/auth/login",data,{
         withCredentials:true,
         headers:{
             "Content-Type":"application/json",
@@ -191,7 +191,7 @@ export const login=(data)=>async(dispatch)=>{
 export const logout=()=>async(dispatch)=>{
      dispatch(authSlice.actions.logoutReq());
     await axios
-    .get("https://e-book-management-system-rprf.onrender.com/api/auth/logout",{
+    .get("http://localhost:4000/api/auth/logout",{
         withCredentials:true,
     })
     .then((res)=>{
@@ -205,7 +205,7 @@ export const logout=()=>async(dispatch)=>{
 export const getUser=()=>async(dispatch)=>{
      dispatch(authSlice.actions.getUserReq());
     await axios
-    .get("https://e-book-management-system-rprf.onrender.com/api/auth/me",{
+    .get("http://localhost:4000/api/auth/me",{
         withCredentials:true,
     })
     .then((res)=>{
@@ -218,7 +218,7 @@ export const getUser=()=>async(dispatch)=>{
 export const forgotPassword=(email)=>async(dispatch)=>{
     dispatch(authSlice.actions.ForgotPasswordReq());
     await axios
-    .post("https://e-book-management-system-rprf.onrender.com/api/auth/password/forgot",{email},{
+    .post("http://localhost:4000/api/auth/password/forgot",{email},{
         withCredentials:true,
         headers:{
             "Content-Type":"application/json",
@@ -234,7 +234,7 @@ export const forgotPassword=(email)=>async(dispatch)=>{
 export const resetPassword=(data,token)=>async(dispatch)=>{
     dispatch(authSlice.actions.ResetPasswordReq());
     await axios
-    .put(`https://e-book-management-system-rprf.onrender.com/api/auth/password/reset/${token}`,data,{
+    .put(`http://localhost:4000/api/auth/password/reset/${token}`,data,{
         withCredentials:true,
         headers:{
             "Content-Type":"application/json",
@@ -250,7 +250,7 @@ export const resetPassword=(data,token)=>async(dispatch)=>{
 export const updatePassword=(data)=>async(dispatch)=>{
     dispatch(authSlice.actions.UpdatePasswordReq());
     await axios
-    .put(`https://e-book-management-system-rprf.onrender.com/api/auth/password/update`,data,{
+    .put(`http://localhost:4000/api/auth/password/update`,data,{
         withCredentials:true,
         headers:{
             "Content-Type":"application/json",

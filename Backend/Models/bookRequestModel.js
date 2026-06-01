@@ -1,21 +1,33 @@
 import mongoose from "mongoose";
+const bookRequestSchema=new mongoose.Schema({
+     user: {
+      id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+      name: String,
+      email: String,
+      regdno: Number,
+    },
+     book: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "book",
+      required: true,
+    },
 
-const requestSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  book: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "book",  
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: ["Pending", "Approved", "Rejected"],
-    default: "Pending",
-  },
-}, { timestamps: true });
+    status: {
+      type: String,
+      enum: ["Pending", "Approved", "Rejected"],
+      default: "Pending",
+    },
 
-export const BookRequest = mongoose.model("BookRequest", requestSchema);
+    requestedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { timestamps: true }
+);
+
+export const BookRequest = mongoose.model("BookRequest",bookRequestSchema);
