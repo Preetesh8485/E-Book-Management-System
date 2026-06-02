@@ -1,18 +1,23 @@
-import transporter from "../config/nodemailer.js";
+import * as Brevo from "@getbrevo/brevo";
 import { EMAIL_VERIFY_TEMPLATE } from "./emailTemplates.js";
+
+const apiInstance = new Brevo.TransactionalEmailsApi();
+apiInstance.setApiKey(
+    Brevo.TransactionalEmailsApiApiKeys.apiKey,
+    process.env.BREVO_API_KEY
+);
 
 export async function SendVerificationCode(verificationCode, email, res) {
     try {
-        const mailOptions = {
-            from: process.env.SENDER_EMAIL,
-            to: email,
-            subject: "Library Account verification OTP",
-            html: EMAIL_VERIFY_TEMPLATE
-                .replace("{{otp}}", verificationCode)
-                .replace("{{email}}", email)
-        };
+        const sendSmtpEmail = new Brevo.SendSmtpEmail();
+        sendSmtpEmail.sender = { email: process.env.SENDER_EMAIL };
+        sendSmtpEmail.to = [{ email }];
+        sendSmtpEmail.subject = "Library Account verification OTP";
+        sendSmtpEmail.htmlContent = EMAIL_VERIFY_TEMPLATE
+            .replace("{{otp}}", verificationCode)
+            .replace("{{email}}", email);
 
-        await transporter.sendMail(mailOptions);
+        await apiInstance.sendTransacEmail(sendSmtpEmail);
 
         return res.json({
             success: true,
