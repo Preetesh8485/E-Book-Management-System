@@ -1,3 +1,4 @@
+import nodemailer from 'nodemailer'
 const transporter = nodemailer.createTransport({
    host: "smtp-relay.brevo.com",
    port: 587,
@@ -13,4 +14,5 @@ const transporter = nodemailer.createTransport({
    greetingTimeout: 10000,
    socketTimeout: 10000,
 });
+
 export default transporter;
