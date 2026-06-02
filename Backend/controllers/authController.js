@@ -59,7 +59,7 @@ export const verifyOTP = catchAsynError(async (req, res, next) => {
             return next(new ErrorHandler("User not found", 404));
         }
 
-        let user;
+        let user= userAllEntries[0];;
 
         if (userAllEntries.length > 1) {
             await User.deleteMany({
@@ -67,8 +67,6 @@ export const verifyOTP = catchAsynError(async (req, res, next) => {
                 email,
                 Accountverification: false,
             });
-        } else {
-            user = userAllEntries[0];
         }
 
         if (user.OTP !== Number(otp)) {
@@ -132,14 +130,14 @@ export const forgotPassword = catchAsynError(async (req, res, next) => {
         Accountverification: true,
     });
     if (!req.body.email) {
-        next(new ErrorHandler("Email field is empty", 400));
+        return next(new ErrorHandler("Email field is empty", 400));
     }
     if (!user) {
-        next(new ErrorHandler("User not found", 400));
+       return next(new ErrorHandler("User not found", 400));
     }
     const resetToken = user.getRestPasswordToken();
     await user.save({ validateBeforeSave: false });
-    const passwordResetURL = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`
+    const passwordResetURL = `${process.env.FRONTEND_URL}/api/auth/password/reset/${resetToken}`
     const message = generateForgotPasswordEmailTemplate(user.name, passwordResetURL);
     try {
         await sendEmail({
