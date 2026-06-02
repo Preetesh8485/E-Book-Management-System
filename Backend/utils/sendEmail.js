@@ -1,11 +1,22 @@
+import apiInstance from "../config/brevo.js";
 
-import transporter from "../config/nodemailer.js";
-export const sendEmail= async({email,subject,message})=>{
-    const mailOptions = {
-                from: process.env.SENDER_EMAIL,
-                to: email,
-                subject,
-                html: message
+export const sendEmail = async ({ email, subject, message }) => {
+
+    const sendSmtpEmail = {
+        sender: {
+            email: process.env.SENDER_EMAIL,
+            name: "Digital Library"
+        },
+
+        to: [
+            {
+                email: email
             }
-            await transporter.sendMail(mailOptions);
-}
+        ],
+
+        subject: subject,
+        htmlContent: message
+    };
+
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
+};

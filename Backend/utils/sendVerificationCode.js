@@ -1,18 +1,33 @@
-import transporter from "../config/nodemailer.js";
+import apiInstance from "../config/brevo.js";
 import { EMAIL_VERIFY_TEMPLATE } from "./emailTemplates.js";
 
-export async function SendVerificationCode(verificationCode, email, res) {
+export async function SendVerificationCode(
+    verificationCode,
+    email,
+    res
+) {
     try {
-        const mailOptions = {
-            from: process.env.SENDER_EMAIL,
-            to: email,
+
+        await apiInstance.sendTransacEmail({
+
+            sender: {
+                email: process.env.SENDER_EMAIL,
+                name: "Digital Library"
+            },
+
+            to: [
+                {
+                    email: email
+                }
+            ],
+
             subject: "Library Account verification OTP",
-            html: EMAIL_VERIFY_TEMPLATE
+
+            htmlContent: EMAIL_VERIFY_TEMPLATE
                 .replace("{{otp}}", verificationCode)
                 .replace("{{email}}", email)
-        };
 
-        await transporter.sendMail(mailOptions);
+        });
 
         return res.json({
             success: true,
@@ -20,6 +35,7 @@ export async function SendVerificationCode(verificationCode, email, res) {
         });
 
     } catch (error) {
+
         return res.status(500).json({
             success: false,
             message: "Verification OTP failed to send",
