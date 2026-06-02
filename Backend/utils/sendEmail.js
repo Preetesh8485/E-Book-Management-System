@@ -1,8 +1,13 @@
 import apiInstance from "../config/brevo.js";
 
-export const sendEmail = async ({ email, subject, message }) => {
+export const sendEmail = async ({
+    email,
+    subject,
+    message
+}) => {
 
-    const sendSmtpEmail = {
+    await apiInstance.sendTransacEmail({
+
         sender: {
             email: process.env.SENDER_EMAIL,
             name: "Digital Library"
@@ -15,8 +20,7 @@ export const sendEmail = async ({ email, subject, message }) => {
         ],
 
         subject: subject,
-        htmlContent: message
-    };
 
-    await apiInstance.sendTransacEmail(sendSmtpEmail);
+        htmlContent: message
+    });
 };
