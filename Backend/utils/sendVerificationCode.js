@@ -1,15 +1,16 @@
-import * as Brevo from "@getbrevo/brevo";
+import SibApiV3Sdk from "@getbrevo/brevo";
+const { TransactionalEmailsApi, SendSmtpEmail, TransactionalEmailsApiApiKeys } = SibApiV3Sdk;
 import { EMAIL_VERIFY_TEMPLATE } from "./emailTemplates.js";
 
-const apiInstance = new Brevo.TransactionalEmailsApi();
+const apiInstance = new TransactionalEmailsApi();
 apiInstance.setApiKey(
-    Brevo.TransactionalEmailsApiApiKeys.apiKey,
-    process.env.BREVO_API_KEY
+  TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
 );
 
 export async function SendVerificationCode(verificationCode, email, res) {
     try {
-        const sendSmtpEmail = new Brevo.SendSmtpEmail();
+        const sendSmtpEmail = new SendSmtpEmail();
         sendSmtpEmail.sender = { email: process.env.SENDER_EMAIL };
         sendSmtpEmail.to = [{ email }];
         sendSmtpEmail.subject = "Library Account verification OTP";
