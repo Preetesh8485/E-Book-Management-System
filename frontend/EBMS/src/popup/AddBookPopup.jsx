@@ -187,53 +187,138 @@ const AddBookPopup = () => {
                 </label>
                 <textarea value={description} onChange={(e) => { setDescription(e.target.value) }} placeholder="About Book" rows={4} className="w-full px-4 py-2 border border-black rounded-md" />
                 {metadata && (
-                  <div className="mt-3 p-3 border rounded bg-gray-100">
+                  <div className="mt-4 p-4 border rounded-lg bg-gray-100 space-y-4">
 
-                    <p>
-                      <strong>Genres:</strong>{" "}
-                      {metadata.genre?.join(", ")}
-                    </p>
+                    <h4 className="font-bold text-lg">
+                      AI Generated Metadata
+                    </h4>
 
-                    <p>
-                      <strong>Tags:</strong>{" "}
-                      {metadata.tags?.join(", ")}
-                    </p>
+                    <div className="grid grid-cols-2 gap-3">
 
-                    <p>
-                      <strong>Mood Tags:</strong>{" "}
-                      {metadata.moodTags?.join(", ")}
-                    </p>
+                      <div className="bg-white p-3 rounded shadow-sm">
+                        <p className="font-semibold">
+                          Difficulty
+                        </p>
+                        <p>
+                          {metadata.difficultyLevel}
+                        </p>
+                      </div>
 
-                    <p>
-                      <strong>Difficulty:</strong>{" "}
-                      {metadata.difficultyLevel}
-                    </p>
+                      <div className="bg-white p-3 rounded shadow-sm">
+                        <p className="font-semibold">
+                          Language
+                        </p>
+                        <p>
+                          {metadata.language}
+                        </p>
+                      </div>
+
+                      <div className="bg-white p-3 rounded shadow-sm">
+                        <p className="font-semibold">
+                          Publish Year
+                        </p>
+                        <p>
+                          {metadata.publishYear || "Unknown"}
+                        </p>
+                      </div>
+
+                    </div>
+
+                    <div>
+                      <p className="font-semibold">
+                        Genres
+                      </p>
+
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {metadata.genre?.map((item, index) => (
+                          <span
+                            key={index}
+                            className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm"
+                          >
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="font-semibold">
+                        Tags
+                      </p>
+
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {metadata.tags?.map((item, index) => (
+                          <span
+                            key={index}
+                            className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm"
+                          >
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="font-semibold">
+                        Mood Tags
+                      </p>
+
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {metadata.moodTags?.map((item, index) => (
+                          <span
+                            key={index}
+                            className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-sm"
+                          >
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="font-semibold mb-1">
+                        AI Summary
+                      </p>
+
+                      <div className="bg-white p-3 rounded shadow-sm text-sm">
+                        {metadata.aiSummary}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="font-semibold mb-1">
+                        Critic Summary
+                      </p>
+
+                      <div className="bg-white p-3 rounded shadow-sm text-sm">
+                        {metadata.criticSummary}
+                      </div>
+                    </div>
 
                   </div>
                 )}
               </div>
-              <div className="flex justify-end space-x-4">
+              <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:space-x-1 mt-4">
                 <button
                   type="button"
                   onClick={handleGenerateMetadata}
-                  className="w-full bg-blue-600 text-white py-2 rounded mt-2"
+                  disabled={metadataLoading}
+                  className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {
-                    metadataLoading
-                      ? "Generating..."
-                      : "Generate Metadata"
-                  }
+                  {metadataLoading ? "Generating..." : "Generate Metadata"}
                 </button>
+
                 <button
-                  className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
                   type="button"
                   onClick={handleClose}
+                  className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 text-sm font-medium rounded-lg transition-colors duration-200"
                 >
                   Close
                 </button>
+
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 active:bg-black text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200"
                 >
                   ADD
                 </button>
