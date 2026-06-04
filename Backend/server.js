@@ -17,6 +17,7 @@ import { removedUnverifiedAccounts } from "./utils/removeUnverifiedAccount.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
 import { notifyWishlistUsers } from "./utils/wishlistNotification.js";
 import RequestRouter from "./routes/reqRoutes.js";
+import airouter from "./routes/aiRoutes.js";
 cloudinary.config({
   cloud_name:process.env.CLOUDINARY_CLIENT_NAME,
   api_key:process.env.CLOUDINARY_CLIENT_API,
@@ -48,6 +49,7 @@ app.use('/api/borrow',borrowRouter);
 app.use('/api/user',UserRouter);
 app.use("/api/v1/wishlist", wishlistRoutes);
 app.use("/api/request",RequestRouter)
+app.use("/api/ai", airouter);
 app.use(errorMiddleware);
 app.listen(port, () =>
   console.log(`Server running on PORT: ${port}`)

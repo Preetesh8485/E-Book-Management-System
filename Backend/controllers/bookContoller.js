@@ -4,24 +4,66 @@ import { Book } from "../Models/bookModel.js"
 import { OrderList } from "../Models/bookOrder.js"
 import ErrorHandler from "../middlewear/errorMiddlewear.js"
 import cloudinary from "../utils/cloudinary.js"
+import { GoogleGenerativeAI } from "@google/generative-ai";
 export const addBook = catchAsynError(async (req, res, next) => {
-    let { title, author, ISBN, description, location, price, quantity } = req.body;
+    let {
+        title,
+        author,
+        ISBN,
+        description,
+        location,
+        price,
+        quantity,
 
-    if (!title || !author || !ISBN || !location || !description || price === undefined || quantity === undefined) {
-        return next(new ErrorHandler("Enter all fields", 400));
+        genre,
+        tags,
+        moodTags,
+        difficultyLevel,
+        language,
+        publishYear,
+        aiSummary,
+        criticSummary,
+    } = req.body;
+
+    if (
+        !title ||
+        !author ||
+        !ISBN ||
+        !location ||
+        !description ||
+        price === undefined ||
+        quantity === undefined
+    ) {
+        return next(
+            new ErrorHandler("Enter all required fields", 400)
+        );
     }
+
     ISBN = ISBN.replace(/-/g, "").trim();
+
     if (!/^\d{10}(\d{3})?$/.test(ISBN)) {
-        return next(new ErrorHandler("Invalid ISBN format", 400));
+        return next(
+            new ErrorHandler("Invalid ISBN format", 400)
+        );
     }
+
     if (price < 0 || quantity < 0) {
-        return next(new ErrorHandler("Price and quantity must be non-negative", 400));
+        return next(
+            new ErrorHandler(
+                "Price and quantity must be non-negative",
+                400
+            )
+        );
     }
+
     const existingBook = await Book.findOne({ ISBN });
 
     if (existingBook) {
-        return next(new ErrorHandler("ISBN already exists", 400));
+        return next(
+            new ErrorHandler("ISBN already exists", 400)
+        );
     }
+
     if (!req.file) {
         return next(
             new ErrorHandler(
@@ -31,17 +73,15 @@ export const addBook = catchAsynError(async (req, res, next) => {
         );
     }
 
-    const base64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+    const base64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString(
+        "base64"
+    )}`;
 
     const cloudinaryResponse =
         await cloudinary.uploader.upload(base64, {
-
             folder: "LIBRARY_BOOKS",
-
             quality: "auto",
-
             fetch_format: "auto",
-
             transformation: [
                 {
                     width: 500,
@@ -49,7 +89,31 @@ export const addBook = catchAsynError(async (req, res, next) => {
                 },
             ],
         });
+
     try {
+        try {
+            genre =
+                typeof genre === "string"
+                    ? JSON.parse(genre)
+                    : genre || [];
+
+            tags =
+                typeof tags === "string"
+                    ? JSON.parse(tags)
+                    : tags || [];
+
+            moodTags =
+                typeof moodTags === "string"
+                    ? JSON.parse(moodTags)
+                    : moodTags || [];
+        } catch {
+            return next(
+                new ErrorHandler(
+                    "Invalid metadata format",
+                    400
+                )
+            );
+        }
         const book = await Book.create({
             title,
             author,
@@ -59,28 +123,43 @@ export const addBook = catchAsynError(async (req, res, next) => {
             price,
             quantity,
 
-            image: {
-                public_id:
-                    cloudinaryResponse.public_id,
+            genre,
+            tags,
+            moodTags,
 
-                url:
-                    cloudinaryResponse.secure_url,
+            difficultyLevel,
+            language,
+            publishYear,
+            aiSummary,
+            criticSummary,
+
+            image: {
+                public_id: cloudinaryResponse.public_id,
+                url: cloudinaryResponse.secure_url,
             },
         });
-
-        res.status(201).json({
+        return res.status(201).json({
             success: true,
-            message: "Book added to library successfully",
+            message:
+                "Book added to library successfully",
             book,
         });
-
     } catch (error) {
-        if (error.code === 11000 && error.keyPattern?.ISBN) {
-            return next(new ErrorHandler("ISBN already exists", 400));
+        if (
+            error.code === 11000 &&
+            error.keyPattern?.ISBN
+        ) {
+            return next(
+                new ErrorHandler(
+                    "ISBN already exists",
+                    400
+                )
+            );
         }
+
         return next(error);
     }
-})
+});
 export const DeleteBook = catchAsynError(async (req, res, next) => {
     const { id } = req.params;
     const book = await Book.findById(id);
@@ -89,10 +168,10 @@ export const DeleteBook = catchAsynError(async (req, res, next) => {
     }
     if (book.image?.public_id) {
 
-    await cloudinary.uploader.destroy(
-        book.image.public_id
-    );
-}
+        await cloudinary.uploader.destroy(
+            book.image.public_id
+        );
+    }
     await book.deleteOne();
     res.status(200).json({
         success: true,
@@ -194,3 +273,138 @@ export const deleteOrder = catchAsynError(async (req, res, next) => {
         message: "Order deleted successfully",
     });
 });
+const genAI = new GoogleGenerativeAI(
+    process.env.GEMINI_API_KEY
+);
+
+const model = genAI.getGenerativeModel({
+    model: "gemini-2.5-flash",
+});
+
+export const generateBookMetadata =
+    catchAsynError(async (req, res, next) => {
+
+        const {
+            title,
+            author,
+            description,
+        } = req.body;
+
+        if (
+            !title ||
+            !author ||
+            !description
+        ) {
+            return next(
+                new ErrorHandler(
+                    "Title, author and description are required",
+                    400
+                )
+            );
+        }
+
+        const prompt = `
+You are a professional librarian.
+
+Analyze the following book and return ONLY valid JSON.
+
+Title:
+${title}
+
+Author:
+${author}
+
+Description:
+${description}
+
+Rules:
+
+1. genre must contain 1-3 genres.
+2. tags must contain 5-10 useful search keywords.
+3. moodTags must be chosen from:
+   ["Happy","Sad","Motivated","Stressed","Relaxed","Curious"].
+4. difficultyLevel must be:
+   Beginner, Intermediate, or Advanced.
+5. aiSummary should be under 60 words.
+6. criticSummary should be under 60 words.
+7. Output JSON only.
+
+{
+  "genre": [],
+  "tags": [],
+  "moodTags": [],
+  "difficultyLevel": "",
+  "language": "English",
+  "publishYear": null,
+  "aiSummary": "",
+  "criticSummary": ""
+}
+`;
+
+        let result;
+
+        try {
+            result = await Promise.race([
+                model.generateContent(prompt),
+                new Promise((_, reject) =>
+                    setTimeout(
+                        () => reject(new Error("AI timeout")),
+                        10000
+                    )
+                )
+            ]);
+        } catch (error) {
+            return next(
+                new ErrorHandler(
+                    "AI service unavailable. Please try again.",
+                    503
+                )
+            );
+        }
+
+        let response =
+            result.response.text();
+
+        response = response
+            .replace(/```json/g, "")
+            .replace(/```/g, "")
+            .trim();
+
+        const start = response.indexOf("{");
+        const end = response.lastIndexOf("}");
+
+        response = response.slice(
+            start,
+            end + 1
+        );
+
+        let metadata;
+
+        try {
+            metadata = JSON.parse(response);
+            if (
+                !Array.isArray(metadata.genre) ||
+                !Array.isArray(metadata.tags) ||
+                !Array.isArray(metadata.moodTags)
+            ) {
+                return next(
+                    new ErrorHandler(
+                        "Invalid AI response structure",
+                        500
+                    )
+                );
+            }
+        } catch {
+            return next(
+                new ErrorHandler(
+                    "AI returned invalid data",
+                    500
+                )
+            );
+        }
+
+        return res.status(200).json({
+            success: true,
+            metadata,
+        });
+    });
