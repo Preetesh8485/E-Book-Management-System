@@ -1,5 +1,5 @@
 import { Chat } from "../Models/chatModel.js";
-import { Book } from "../Models/BookModel.js";
+import { Book } from "../Models/bookModel.js";
 import { UserPreference } from "../Models/UserPreferenceModel.js";
 import { generateAIResponse } from "../services/aiService.js";
 import { catchAsynError } from "../middlewear/CatchAsyncErrors.js";
