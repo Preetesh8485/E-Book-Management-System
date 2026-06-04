@@ -9,8 +9,25 @@ const bookSlice = createSlice({
         error: null,
         message: null,
         books: [],
+        metadata: null,
+        metadataLoading: false,
+        metadataError: null,
     },
     reducers: {
+        generateMetadataReq(state) {
+            state.metadataLoading = true;
+            state.metadataError = null;
+        },
+
+        generateMetadataSuccess(state, action) {
+            state.metadataLoading = false;
+            state.metadata = action.payload;
+        },
+
+        generateMetadataFail(state, action) {
+            state.metadataLoading = false;
+            state.metadataError = action.payload;
+        },
         fetchBooksReq(state) {
             state.loading = true;
             state.error = null;
@@ -57,6 +74,7 @@ const bookSlice = createSlice({
             state.loading = false;
             state.error = action.payload;
         },
+
     }
 });
 
@@ -72,8 +90,8 @@ export const addBook = (data) => async (dispatch) => {
     dispatch(bookSlice.actions.addBookRequest());
     await axios.post("https://e-book-management-system-rprf.onrender.com/api/book/admin/addBook", data, {
         withCredentials: true,
-        Headers: {
-            "Content-Type": "application/json"
+        headers: {
+            "Content-Type": "multipart/form-data"
         }
     }).then(res => {
         dispatch(bookSlice.actions.addBookSuccess(res.data.message));
@@ -98,4 +116,39 @@ export const deleteBook = (id) => async (dispatch) => {
 export const resetBookSlice = () => async (dispatch) => {
     dispatch(bookSlice.actions.resetBookSlice());
 };
+export const generateBookMetadata =
+    (data) => async (dispatch) => {
+
+        dispatch(
+            bookSlice.actions.generateMetadataReq()
+        );
+
+        await axios.post(
+            "https://e-book-management-system-rprf.onrender.com/api/book/admin/generate-metadata",
+            data,
+            {
+                withCredentials: true,
+            }
+        )
+            .then((res) => {
+
+                dispatch(
+                    bookSlice.actions.generateMetadataSuccess(
+                        res.data.metadata
+                    )
+                );
+
+            })
+            .catch((err) => {
+
+                dispatch(
+                    bookSlice.actions.generateMetadataFail(
+                        err.response?.data?.error ||
+                        err.response?.data?.message ||
+                        "Failed to generate metadata"
+                    )
+                );
+
+            });
+    };
 export default bookSlice.reducer;

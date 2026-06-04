@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { addBook, fetchAllBooks } from "../store/slices/bookSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { addBook, fetchAllBooks, generateBookMetadata } from "../store/slices/bookSlice";
 import { toggleAddBookPopup } from "../store/slices/popupSlice";
 
 const AddBookPopup = () => {
@@ -30,7 +30,31 @@ const AddBookPopup = () => {
       dispatch(toggleAddBookPopup());
     }, 300);
   };
+  const {
+    metadata,
+    metadataLoading,
+  } = useSelector(
+    (state) => state.book
+  );
+  const handleGenerateMetadata = () => {
 
+    if (
+      !title.trim() ||
+      !author.trim() ||
+      !description.trim()
+    ) {
+      return;
+    }
+
+    dispatch(
+      generateBookMetadata({
+        title,
+        author,
+        description,
+      })
+    );
+
+  };
   const handleAddBook = (e) => {
     e.preventDefault();
 
@@ -43,6 +67,49 @@ const AddBookPopup = () => {
     formData.append("quantity", quantity);
     formData.append("description", description);
     formData.append("image", image);
+    if (metadata) {
+
+      formData.append(
+        "genre",
+        JSON.stringify(metadata.genre || [])
+      );
+
+      formData.append(
+        "tags",
+        JSON.stringify(metadata.tags || [])
+      );
+
+      formData.append(
+        "moodTags",
+        JSON.stringify(metadata.moodTags || [])
+      );
+
+      formData.append(
+        "difficultyLevel",
+        metadata.difficultyLevel || ""
+      );
+
+      formData.append(
+        "language",
+        metadata.language || "English"
+      );
+
+      formData.append(
+        "publishYear",
+        metadata.publishYear || ""
+      );
+
+      formData.append(
+        "aiSummary",
+        metadata.aiSummary || ""
+      );
+
+      formData.append(
+        "criticSummary",
+        metadata.criticSummary || ""
+      );
+    }
+
     dispatch(addBook(formData));
     dispatch(fetchAllBooks());
     handleClose();
@@ -119,8 +186,44 @@ const AddBookPopup = () => {
                   Book Description
                 </label>
                 <textarea value={description} onChange={(e) => { setDescription(e.target.value) }} placeholder="About Book" rows={4} className="w-full px-4 py-2 border border-black rounded-md" />
+                {metadata && (
+                  <div className="mt-3 p-3 border rounded bg-gray-100">
+
+                    <p>
+                      <strong>Genres:</strong>{" "}
+                      {metadata.genre?.join(", ")}
+                    </p>
+
+                    <p>
+                      <strong>Tags:</strong>{" "}
+                      {metadata.tags?.join(", ")}
+                    </p>
+
+                    <p>
+                      <strong>Mood Tags:</strong>{" "}
+                      {metadata.moodTags?.join(", ")}
+                    </p>
+
+                    <p>
+                      <strong>Difficulty:</strong>{" "}
+                      {metadata.difficultyLevel}
+                    </p>
+
+                  </div>
+                )}
               </div>
               <div className="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  onClick={handleGenerateMetadata}
+                  className="w-full bg-blue-600 text-white py-2 rounded mt-2"
+                >
+                  {
+                    metadataLoading
+                      ? "Generating..."
+                      : "Generate Metadata"
+                  }
+                </button>
                 <button
                   className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
                   type="button"
