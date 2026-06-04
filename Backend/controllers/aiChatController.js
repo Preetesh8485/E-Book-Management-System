@@ -1,4 +1,4 @@
-import { Chat } from "../Models/ChatModel.js";
+import { Chat } from "../Models/chatModel.js";
 import { Book } from "../Models/BookModel.js";
 import { UserPreference } from "../Models/UserPreferenceModel.js";
 import { generateAIResponse } from "../services/aiService.js";
