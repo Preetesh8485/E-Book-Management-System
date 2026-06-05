@@ -3,159 +3,173 @@ import { Book } from "../Models/bookModel.js";
 import { UserPreference } from "../Models/UserPreferenceModel.js";
 import { generateAIResponse } from "../services/aiService.js";
 import { catchAsynError } from "../middlewear/CatchAsyncErrors.js";
+import User from "../Models/UserModel.js";
 
-export const chatWithAI = catchAsynError(
-    async (req, res, next) => {
-        const { message } = req.body;
+export const chatWithAI = catchAsynError(async (req, res, next) => {
+    const { message } = req.body;
 
-        if (!message || !message.trim()) {
-            return res.status(400).json({
-                success: false,
-                message: "Message is required",
-            });
-        }
-
-        const userId = req.user._id;
-        await Chat.create({
-            user: userId,
-            role: "user",
-            message,
+    if (!message || !message.trim()) {
+        return res.status(400).json({
+            success: false,
+            message: "Message is required",
         });
-        const history = await Chat.find({
-            user: userId,
+    }
+
+    const userId = req.user._id;
+
+    // Fetch User and Borrow History
+    const user = await User.findById(userId)
+        .populate({
+            path: "borrowedBooks.bookId",
+            select: "title author genre",
         })
-            .sort({ createdAt: -1 })
-            .limit(10);
-        const preference = await UserPreference.findOne({
-            user: userId,
-        });
+        .lean();
 
-        const moodPrompt = `
-Analyze the user's message and return ONLY ONE of the following moods.
+    const borrowHistory = user?.borrowedBooks?.length
+        ? user.borrowedBooks
+              .map((b) => b.bookId?.title || b.BookTitle)
+              .join(", ")
+        : "No borrowing history";
 
-Allowed Moods:
-Happy
-Sad
-Motivated
-Stressed
-Relaxed
-Curious
+    // Fetch History and Preferences
+    const history = await Chat.find({ user: userId })
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .lean();
 
-User Message:
-"${message}"
+    const preference = await UserPreference.findOne({ user: userId }).lean();
 
-Return ONLY the mood.
+    // -------------------------
+    // 1. User Profile Detection
+    // -------------------------
+    const profilePrompt = `
+Analyze the user message and return ONLY valid JSON.
+Format: { "emotion": "", "goal": "", "difficulty": "" }
+Examples:
+"I want to learn React" -> { "emotion":"curious", "goal":"react", "difficulty":"Beginner" }
+"I need advanced system design books" -> { "emotion":"motivated", "goal":"system design", "difficulty":"Advanced" }
+User Message: "${message}"
+Return ONLY JSON.
 `;
 
-        let mood = "Curious";
+    let profile = { emotion: "curious", goal: "", difficulty: "" };
 
-        try {
-            mood = (
-                await generateAIResponse(moodPrompt)
-            )
-                .trim()
-                .replace(/["']/g, "");
-        } catch (error) {
-            console.log("Mood detection failed:", error);
-        }
+    try {
+        const response = await generateAIResponse(profilePrompt, { jsonMode: true });
+        profile = typeof response === "string" ? JSON.parse(response) : response;
+    } catch (error) {
+        console.log("Profile detection failed, using defaults:", error);
+    }
 
-        // -------------------------
-        // Mood Based Books
-        // -------------------------
+    // -------------------------
+    // 2. Build Query & Find Books
+    // -------------------------
+    const conditions = [];
 
-        let moodBooks = await Book.find({
-            moodTags: {
-                $regex: mood,
-                $options: "i",
-            },
-        })
-            .select(
-                "title author genre moodTags averageRating aiSummary"
-            )
-            .limit(20);
+    if (profile.emotion) {
+        conditions.push({ moodTags: { $regex: profile.emotion, $options: "i" } });
+    }
+    if (profile.goal) {
+        conditions.push({ tags: { $regex: profile.goal, $options: "i" } });
+    }
+    if (profile.difficulty) {
+        conditions.push({ difficultyLevel: { $regex: profile.difficulty, $options: "i" } });
+    }
 
-        // Fallback if no mood books found
-        if (moodBooks.length === 0) {
-            moodBooks = await Book.find({})
-                .select(
-                    "title author genre moodTags averageRating aiSummary"
-                )
-                .limit(20);
-        }
+    const query = {
+        availability: true,
+        quantity: { $gt: 0 },
+    };
 
-        // -------------------------
-        // AI Prompt
-        // -------------------------
+    if (conditions.length > 0) {
+        query.$or = conditions;
+    }
 
-        const prompt = `
+    let books = await Book.find(query)
+        .select("title author genre moodTags tags difficultyLevel averageRating aiSummary popularityScore")
+        .sort({ popularityScore: -1, averageRating: -1 })
+        .limit(20)
+        .lean();
+
+    // Fallback: If no books match the specific profile, fetch generic popular books
+    if (books.length === 0) {
+        books = await Book.find({ availability: true, quantity: { $gt: 0 } })
+            .select("title author genre moodTags tags difficultyLevel averageRating aiSummary popularityScore")
+            .sort({ popularityScore: -1, averageRating: -1 })
+            .limit(20)
+            .lean();
+    }
+
+    const formattedBooks = books
+        .map(
+            (book) => `
+Title: ${book.title}
+Author: ${book.author}
+Genre: ${book.genre?.join(", ") || "N/A"}
+Tags: ${book.tags?.join(", ") || "N/A"}
+Mood Tags: ${book.moodTags?.join(", ") || "N/A"}
+Difficulty: ${book.difficultyLevel || "N/A"}
+Rating: ${book.averageRating}
+Summary: ${book.aiSummary || "N/A"}
+`
+        )
+        .join("\n");
+
+    // -------------------------
+    // 3. Librarian Prompt
+    // -------------------------
+    const prompt = `
 You are an intelligent AI Librarian.
 
-User Mood:
-${mood}
-
-User Preferences:
-${JSON.stringify(preference || {})}
+User Emotion: ${profile.emotion}
+Learning Goal: ${profile.goal}
+Preferred Difficulty: ${profile.difficulty}
+Borrow History: ${borrowHistory}
+Favorite Genres: ${preference?.favoriteGenres?.join(", ") || "None"}
+Favorite Authors: ${preference?.favoriteAuthors?.join(", ") || "None"}
 
 Recent Chat History:
 ${history
-                .reverse()
-                .map(
-                    (chat) =>
-                        `${chat.role}: ${chat.message}`
-                )
-                .join("\n")}
+    .reverse()
+    .map((chat) => `${chat.role}: ${chat.message}`)
+    .join("\n")}
 
 Available Books:
-${JSON.stringify(moodBooks)}
+${formattedBooks}
 
-Current User Message:
-${message}
+Current User Message: ${message}
 
 Instructions:
-
 1. Recommend ONLY books from Available Books.
-2. Use user's mood while recommending.
-3. Use previous chat history for personalization.
-4. Explain WHY each recommendation matches.
-5. Mention author name.
-6. Mention genre if available.
-7. Recommend at most 3 books.
-8. If no suitable book exists, politely say so.
-9. Respond naturally like a librarian.
+2. Explain why each recommendation matches.
+3. Mention author name and genre.
+4. Recommend at most 3 books.
+5. Use borrow history for personalization.
+6. If no suitable book exists, politely say so.
+7. Behave like a professional librarian.
 `;
 
-        const aiReply = await generateAIResponse(prompt);
+    const aiReply = await generateAIResponse(prompt);
 
-        // Save AI response
-        await Chat.create({
-            user: userId,
-            role: "assistant",
-            message: aiReply,
-        });
+    // -------------------------
+    // 4. Save Chat History & Updates
+    // -------------------------
+    await Chat.create([
+        { user: userId, role: "user", message },
+        { user: userId, role: "assistant", message: aiReply }
+    ]);
 
-        // -------------------------
-        // Learn User Preferences
-        // -------------------------
-
+    if (profile.emotion) {
         await UserPreference.findOneAndUpdate(
-            {
-                user: userId,
-            },
-            {
-                $addToSet: {
-                    favoriteMoods: mood,
-                },
-            },
-            {
-                upsert: true,
-                new: true,
-            }
+            { user: userId },
+            { $addToSet: { favoriteMoods: profile.emotion } },
+            { upsert: true, new: true }
         );
-
-        return res.status(200).json({
-            success: true,
-            mood,
-            reply: aiReply,
-        });
     }
-);
+
+    return res.status(200).json({
+        success: true,
+        profile,
+        reply: aiReply,
+    });
+});

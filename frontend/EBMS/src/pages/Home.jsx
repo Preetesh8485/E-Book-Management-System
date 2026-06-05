@@ -11,6 +11,8 @@ import Catalog from '../components/Catalog'
 import MyBorrowedBooks from '../components/MyBorrowedBooks'
 import BookOrders from '../components/BookOrders';
 import Requests from '../components/Requests';
+import AIChatComponent from '../components/AIChatComponent';
+
 const Home = () => {
   const [isSideBarOpen, setisSideBarOpen] = useState(false);
   const [selectedComponent, setSelectedComponent] = useState(false);
@@ -52,6 +54,11 @@ const Home = () => {
               case "My Borrowed Books":
                 if (user.role === "Member") {
                   return <MyBorrowedBooks />
+                }
+                break;
+              case "AI Chat":
+                if (user.role === "Member") {
+                  return <AIChatComponent />
                 }
                 break;
               case "Order Book":

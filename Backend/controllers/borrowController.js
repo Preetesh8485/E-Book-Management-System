@@ -77,7 +77,7 @@ export const returnBorrowedBook = catchAsynError(async(req,res,next)=>{
     return next(new ErrorHandler("User not registered",400));
  }
  const borrowedBook= user.borrowedBooks.find((b)=>b.bookId.toString()===bookId&&b.returned===false);
- if(!borrowedBook){return next(new ErrorHandler("This book is not borrowed by the requested user"),400)}
+ if(!borrowedBook){return next(new ErrorHandler("This book is not borrowed by the requested user",400))}
  borrowedBook.returned=true;
  await user.save();
  book.quantity+=1;
@@ -89,7 +89,7 @@ export const returnBorrowedBook = catchAsynError(async(req,res,next)=>{
    "user.email":email,
    returnDate:null
  })
- if(!borrow){return next(new ErrorHandler("This book is not borrowed by the requested user"),400)}
+ if(!borrow){return next(new ErrorHandler("This book is not borrowed by the requested user",400))}
  borrow.returnDate= new Date();
  const fine=calculateFine(borrow.dueDate);
  borrow.fine = fine;

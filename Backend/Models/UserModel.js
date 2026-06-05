@@ -15,7 +15,7 @@ const userSchema =new mongoose.Schema({
     borrowedBooks:[{
         bookId:{
             type:mongoose.Schema.Types.ObjectId,
-            ref:"Book",
+            ref:"book",
         },
         returned:{
             type:Boolean,

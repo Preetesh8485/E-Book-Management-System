@@ -7,6 +7,7 @@ import bookReducer from "./slices/bookSlice"
 import borrowReducer from"./slices/borrowSlice"
 import wishlistReducer from "./slices/wishlistSlice"
 import requestReducer from "./slices/requestSlice"
+import aiReducer from "./slices/aiSlice" 
 export const store = configureStore({
     reducer:{
         auth:authReducer,
@@ -16,6 +17,7 @@ export const store = configureStore({
         book:bookReducer,
         borrow:borrowReducer,
         wishlist:wishlistReducer,
-        request:requestReducer
+        request:requestReducer,
+        ai:aiReducer
     }
 })

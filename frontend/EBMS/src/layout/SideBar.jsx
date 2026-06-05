@@ -15,7 +15,7 @@ import {
   toggleAddNewAdminPopup,
   toggleSettingPopup,
 } from "../store/slices/popupSlice.js";
-import { HelpingHand }from "lucide-react";
+import { HelpingHand, Bot } from "lucide-react";
 import SettingPopup from "../popup/SettingPopup.jsx";
 import AddNewAdmin from "../popup/AddNewAdmin";
 
@@ -123,15 +123,25 @@ const SideBar = ({
           )}
 
           {isAuthenticated && user?.role === "Member" && (
-            <button
-              className={btnStyle}
-              onClick={() =>
-                setSelectedComponent("My Borrowed Books")
-              }
-            >
-              <img src={catalogIcon} alt="icon" />
-              <span>My Borrowed Books</span>
-            </button>
+            <>
+              <button
+                className={btnStyle}
+                onClick={() =>
+                  setSelectedComponent("My Borrowed Books")
+                }
+              >
+                <img src={catalogIcon} alt="icon" />
+                <span>My Borrowed Books</span>
+              </button>
+
+              <button
+                className={btnStyle}
+                onClick={() => setSelectedComponent("AI Chat")}
+              >
+                <Bot className="w-6 h-6" />
+                <span>AI Assistant</span>
+              </button>
+            </>
           )}
 
           <button
