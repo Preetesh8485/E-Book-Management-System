@@ -11,7 +11,7 @@ import Catalog from '../components/Catalog'
 import MyBorrowedBooks from '../components/MyBorrowedBooks'
 import BookOrders from '../components/BookOrders';
 import Requests from '../components/Requests';
-import AIChatComponent from '../components/AIChatComponent';
+import AIChatComponent from '../components/AiChatComponent';
 
 const Home = () => {
   const [isSideBarOpen, setisSideBarOpen] = useState(false);
