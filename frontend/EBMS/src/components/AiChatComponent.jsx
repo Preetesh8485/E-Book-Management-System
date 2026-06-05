@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { chatWithAI, resetAiSlice } from "../slices/aiSlice";
+import { chatWithAI, resetAiSlice } from "../store/slices/aiSlice";
 
 const AIChatComponent = () => {
     const dispatch = useDispatch();
