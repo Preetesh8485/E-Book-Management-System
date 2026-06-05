@@ -1,3 +1,4 @@
+import ErrorHandler from "../middlewear/errorMiddlewear.js";
 import { Chat } from "../Models/chatModel.js";
 import { Book } from "../Models/bookModel.js";
 import { UserPreference } from "../Models/UserPreferenceModel.js";
@@ -8,11 +9,13 @@ import User from "../Models/UserModel.js";
 export const chatWithAI = catchAsynError(async (req, res, next) => {
     const { message } = req.body;
 
+    // 1. Validation using project's ErrorHandler pattern
     if (!message || !message.trim()) {
-        return res.status(400).json({
-            success: false,
-            message: "Message is required",
-        });
+        return next(new ErrorHandler("Message is required", 400));
+    }
+
+    if (!req.user || !req.user._id) {
+        return next(new ErrorHandler("User session not found. Please log in again.", 401));
     }
 
     const userId = req.user._id;
@@ -40,7 +43,7 @@ export const chatWithAI = catchAsynError(async (req, res, next) => {
     const preference = await UserPreference.findOne({ user: userId }).lean();
 
     // -------------------------
-    // 1. User Profile Detection
+    // 2. User Profile Detection
     // -------------------------
     const profilePrompt = `
 Analyze the user message and return ONLY valid JSON.
@@ -62,7 +65,7 @@ Return ONLY JSON.
     }
 
     // -------------------------
-    // 2. Build Query & Find Books
+    // 3. Build Query & Find Books
     // -------------------------
     const conditions = [];
 
@@ -116,7 +119,7 @@ Summary: ${book.aiSummary || "N/A"}
         .join("\n");
 
     // -------------------------
-    // 3. Librarian Prompt
+    // 4. Librarian Prompt
     // -------------------------
     const prompt = `
 You are an intelligent AI Librarian.
@@ -149,27 +152,34 @@ Instructions:
 7. Behave like a professional librarian.
 `;
 
-    const aiReply = await generateAIResponse(prompt);
-
     // -------------------------
-    // 4. Save Chat History & Updates
+    // 5. Execution & Data Persistence
     // -------------------------
-    await Chat.create([
-        { user: userId, role: "user", message },
-        { user: userId, role: "assistant", message: aiReply }
-    ]);
+    try {
+        const aiReply = await generateAIResponse(prompt);
 
-    if (profile.emotion) {
-        await UserPreference.findOneAndUpdate(
-            { user: userId },
-            { $addToSet: { favoriteMoods: profile.emotion } },
-            { upsert: true, new: true }
-        );
+        // Save Chat History & Updates
+        await Chat.create([
+            { user: userId, role: "user", message },
+            { user: userId, role: "assistant", message: aiReply }
+        ]);
+
+        if (profile.emotion) {
+            await UserPreference.findOneAndUpdate(
+                { user: userId },
+                { $addToSet: { favoriteMoods: profile.emotion } },
+                { upsert: true, new: true }
+            );
+        }
+
+        return res.status(200).json({
+            success: true,
+            profile,
+            reply: aiReply,
+        });
+
+    } catch (error) {
+        // Safe forwarding to your global centralized error middleware if Gemini API times out or fails
+        return next(new ErrorHandler(`AI Engine Error: ${error.message}`, 500));
     }
-
-    return res.status(200).json({
-        success: true,
-        profile,
-        reply: aiReply,
-    });
 });
