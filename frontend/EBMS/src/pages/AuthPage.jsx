@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import logo from "../assets/black-logo.png";
 import logo_with_title from "../assets/logo-with-title.png";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,12 +14,15 @@ const Auth = () => {
   const [regdno, setRegdno] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const authModeRef = useRef("login"); // ← always fresh, no stale closure
+
   const dispatch = useDispatch();
   const navigateTo = useNavigate();
   const { loading, error, message, isAuthenticated } = useSelector((state) => state.auth);
 
   const handleLogin = (e) => {
     e.preventDefault();
+    authModeRef.current = "login";
     const data = new FormData();
     data.append("email", email);
     data.append("password", password);
@@ -28,6 +31,7 @@ const Auth = () => {
 
   const handleRegister = (e) => {
     e.preventDefault();
+    authModeRef.current = "register";
     const data = new FormData();
     data.append("email", email);
     data.append("password", password);
@@ -39,8 +43,10 @@ const Auth = () => {
   useEffect(() => {
     if (message) {
       toast.success(message);
+      if (authModeRef.current === "register") {
+        navigateTo(`/otp-verification/${email}`);
+      }
       dispatch(resetAuthSlice());
-      navigateTo(`/otp-verification/${email}`);
     }
     if (error) {
       toast.error(error);

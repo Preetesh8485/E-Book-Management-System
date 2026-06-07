@@ -12,18 +12,23 @@ export const register = catchAsynError(async (req, res, next) => {
     try {
         const { name, email, password, regdno } = req.body;
         if (!name || !email || !password || !regdno) {
-            return next(new ErrorHandler("please enter all fields", 400));
+            return next(new ErrorHandler("Please enter all fields", 400));
         }
-        const isRegistered = await User.findOne({ email, regdno, Accountverification: true });
+        
+        const isRegistered = await User.findOne({ email, Accountverification: true });
         if (isRegistered) {
-            return next(new ErrorHandler("User already exists! please login", 400));
+            return next(new ErrorHandler("User already exists! Please login", 400));
+        }
+        const isRegdnoTaken = await User.findOne({ regdno, Accountverification: true });
+        if (isRegdnoTaken) {
+            return next(new ErrorHandler("This registration number is already in use", 400));
         }
         const registrationAttemptsByUser = await User.find({
             email,
             Accountverification: false,
         });
         if (registrationAttemptsByUser.length >= 5) {
-            return next(new ErrorHandler("Too many unsuccessfull attemps,please contact support", 400));
+            return next(new ErrorHandler("Too many unsuccessful attempts, please contact support", 400));
         }
         if (password.length < 8 || password.length > 16) {
             return next(new ErrorHandler("Password should be between 8-16 characters", 400));
@@ -39,6 +44,18 @@ export const register = catchAsynError(async (req, res, next) => {
         await newUser.save();
         SendVerificationCode(verificationCode, email, res);
     } catch (error) {
+        // If 11000 still somehow slips through, give a readable message
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyValue)[0];
+            return next(new ErrorHandler(
+                field === "email"
+                    ? "This email is already registered"
+                    : field === "regdno"
+                    ? "This registration number is already in use"
+                    : "Duplicate field value entered",
+                400
+            ));
+        }
         next(error);
     }
 });
