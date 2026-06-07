@@ -18,19 +18,22 @@ const Auth = () => {
   const navigateTo = useNavigate();
   const { loading, error, message, isAuthenticated } = useSelector((state) => state.auth);
 
-  const handleSubmit = (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
     const data = new FormData();
     data.append("email", email);
     data.append("password", password);
+    dispatch(login(data));
+  };
 
-    if (isLogin) {
-      dispatch(login(data));
-    } else {
-      data.append("name", name);
-      data.append("regdno", regdno);
-      dispatch(register(data));
-    }
+  const handleRegister = (e) => {
+    e.preventDefault();
+    const data = new FormData();
+    data.append("email", email);
+    data.append("password", password);
+    data.append("name", name);
+    data.append("regdno", regdno);
+    dispatch(register(data));
   };
 
   useEffect(() => {
@@ -91,7 +94,7 @@ const Auth = () => {
             <h1 className="text-3xl md:text-4xl font-medium text-center overflow-hidden mb-2">Welcome to EBMS</h1>
             <p className="text-gray-600 text-center mb-8">Please enter credentials to login</p>
 
-            <form onSubmit={handleSubmit} className="w-full space-y-4">
+            <form onSubmit={handleLogin} className="w-full space-y-4">
               <input
                 type="email"
                 value={email}
@@ -158,7 +161,7 @@ const Auth = () => {
             <h1 className="text-3xl md:text-4xl font-medium text-center overflow-hidden mb-2">Sign Up</h1>
             <p className="text-gray-600 text-center mb-8">Provide your information to sign up</p>
 
-            <form onSubmit={handleSubmit} className="w-full space-y-4">
+            <form onSubmit={handleRegister} className="w-full space-y-4">
               <input
                 type="text"
                 value={name}
@@ -194,9 +197,16 @@ const Auth = () => {
               <button
                 disabled={loading}
                 type="submit"
-                className="w-full py-3 rounded-xl font-semibold bg-[#FB923C] text-white border-2 border-[#FB923C] hover:border-black hover:bg-white hover:text-black transition-all disabled:bg-gray-400"
+                className="w-full py-3 rounded-xl font-semibold bg-[#FB923C] text-white border-2 border-[#FB923C] hover:border-black hover:bg-white hover:text-black transition-all disabled:bg-gray-400 flex items-center justify-center gap-2"
               >
-                {loading && !isLogin ? "CREATING ACCOUNT..." : "SIGN UP"}
+                {loading && !isLogin ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    CREATING ACCOUNT...
+                  </>
+                ) : (
+                  "SIGN UP"
+                )}
               </button>
               <p className="md:hidden text-center mt-6 font-semibold">
                 Already have an account?{" "}
