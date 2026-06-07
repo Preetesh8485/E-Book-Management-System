@@ -39,16 +39,14 @@ const Auth = () => {
   useEffect(() => {
     if (message) {
       toast.success(message);
-      if (!isLogin) {
-        navigateTo(`/otp-verification/${email}`);
-      }
       dispatch(resetAuthSlice());
+      navigateTo(`/otp-verification/${email}`);
     }
     if (error) {
       toast.error(error);
       dispatch(resetAuthSlice());
     }
-  }, [dispatch, error, message, isLogin, navigateTo, email]);
+  }, [dispatch, error, message, email, navigateTo]);
 
   if (isAuthenticated) {
     return <Navigate to={"/"} />;
@@ -58,7 +56,7 @@ const Auth = () => {
     <div className="relative w-full h-screen overflow-hidden bg-white">
 
       <div
-        className={`hidden md:flex absolute top-0 h-full w-1/2  text-white z-20 transition-all duration-700 ease-in-out flex-col items-center justify-center p-8
+        className={`hidden md:flex absolute top-0 h-full w-1/2 text-white z-20 transition-all duration-700 ease-in-out flex-col items-center justify-center p-8
           ${isLogin
             ? "left-1/2 rounded-tl-[80px] rounded-bl-[80px] bg-[#1E3A8A]"
             : "left-0 rounded-tr-[80px] rounded-br-[80px] bg-[#FB923C]"
@@ -79,7 +77,9 @@ const Auth = () => {
           </button>
         </div>
       </div>
+
       <div className="flex h-full w-full relative">
+        {/* Login Form */}
         <div
           className={`absolute inset-0 md:relative md:w-1/2 flex items-center justify-center p-6 transition-all duration-500 z-10 
           ${isLogin
@@ -100,7 +100,7 @@ const Auth = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email Address"
-                className="w-full px-4 py-3 border border-black rounded-xl  focus:ring focus:ring-black"
+                className="w-full px-4 py-3 border border-black rounded-xl focus:ring focus:ring-black"
                 required
               />
               <div className="relative">
@@ -147,6 +147,7 @@ const Auth = () => {
           </div>
         </div>
 
+        {/* Register Form */}
         <div
           className={`absolute inset-0 md:relative md:w-1/2 flex items-center justify-center p-6 transition-all duration-500 z-10 
           ${!isLogin
