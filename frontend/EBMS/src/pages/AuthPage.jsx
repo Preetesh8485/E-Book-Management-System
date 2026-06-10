@@ -20,24 +20,16 @@ const Auth = () => {
   const navigateTo = useNavigate();
   const { loading, error, message, isAuthenticated } = useSelector((state) => state.auth);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    authModeRef.current = "login";
-    const data = new FormData();
-    data.append("email", email);
-    data.append("password", password);
-    dispatch(login(data));
-  };
+ const handleLogin = (e) => {
+  e.preventDefault();
+  authModeRef.current = "login";
+  dispatch(login({ email, password })); 
+};
 
   const handleRegister = (e) => {
     e.preventDefault();
     authModeRef.current = "register";
-    const data = new FormData();
-    data.append("email", email);
-    data.append("password", password);
-    data.append("name", name);
-    data.append("regdno", regdno);
-    dispatch(register(data));
+    dispatch(register({ name, email, password, regdno }));
   };
 
   useEffect(() => {
