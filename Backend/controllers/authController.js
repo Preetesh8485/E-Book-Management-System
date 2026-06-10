@@ -14,7 +14,7 @@ export const register = catchAsynError(async (req, res, next) => {
         if (!name || !email || !password || !regdno) {
             return next(new ErrorHandler("Please enter all fields", 400));
         }
-        
+
         const isRegistered = await User.findOne({ email, Accountverification: true });
         if (isRegistered) {
             return next(new ErrorHandler("User already exists! Please login", 400));
@@ -42,7 +42,11 @@ export const register = catchAsynError(async (req, res, next) => {
         });
         const verificationCode = newUser.generateOTP();
         await newUser.save();
-        SendVerificationCode(verificationCode, email, res);
+        SendVerificationCode(verificationCode, email);
+        res.status(200).json({
+            success: true,
+            message: "Verification code sent to your email",
+        });
     } catch (error) {
         // If 11000 still somehow slips through, give a readable message
         if (error.code === 11000) {
@@ -51,8 +55,8 @@ export const register = catchAsynError(async (req, res, next) => {
                 field === "email"
                     ? "This email is already registered"
                     : field === "regdno"
-                    ? "This registration number is already in use"
-                    : "Duplicate field value entered",
+                        ? "This registration number is already in use"
+                        : "Duplicate field value entered",
                 400
             ));
         }
@@ -76,7 +80,7 @@ export const verifyOTP = catchAsynError(async (req, res, next) => {
             return next(new ErrorHandler("User not found", 404));
         }
 
-        let user= userAllEntries[0];;
+        let user = userAllEntries[0];;
 
         if (userAllEntries.length > 1) {
             await User.deleteMany({
@@ -127,7 +131,7 @@ export const logout = catchAsynError(async (req, res, next) => {
     res.status(200).cookie("token", "", {
         expires: new Date(Date.now()),
         httpOnly: true,
-        secure: true,      
+        secure: true,
         sameSite: "none",
     }).json({
         success: true,
@@ -150,7 +154,7 @@ export const forgotPassword = catchAsynError(async (req, res, next) => {
         return next(new ErrorHandler("Email field is empty", 400));
     }
     if (!user) {
-       return next(new ErrorHandler("User not found", 400));
+        return next(new ErrorHandler("User not found", 400));
     }
     const resetToken = user.getRestPasswordToken();
     await user.save({ validateBeforeSave: false });
