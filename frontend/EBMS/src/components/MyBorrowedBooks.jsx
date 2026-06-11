@@ -80,7 +80,7 @@ const MyBorrowedBooks = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden" style={{ overflow: "auto" }}>
             {booksToDisplay && booksToDisplay.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-separate border-spacing-0">

@@ -152,7 +152,7 @@ const Catalog = () => {
 
         ) : currentItems.length > 0 ? (
           <div className="mt-8 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto" style={{ overflow: "auto" }}>
               <table className="min-w-full">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100">

@@ -60,7 +60,7 @@ const UserDashboard = () => {
 
   return (
     <>
-      <main className="relative flex-1 p-6 pt-24 bg-gray-200 min-h-screen flex flex-col items-center overflow-y-auto w-full">
+      <main className="relative flex-1 p-6 pt-24 bg-gray-200 min-h-screen flex flex-col items-center overflow-y-auto w-full" style={{ overflow: "auto" }}>
         <Header />
         
         <div className="max-w-7xl w-full space-y-6">

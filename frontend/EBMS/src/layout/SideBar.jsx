@@ -139,7 +139,7 @@ const SideBar = ({
                 onClick={() => setSelectedComponent("AI Chat")}
               >
                 <Bot className="w-6 h-6" />
-                <span>AI Assistant</span>
+                <span>AI Librarian</span>
               </button>
             </>
           )}
